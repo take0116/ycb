@@ -3,7 +3,7 @@
     <button [routerLink]="['/events', tournamentId]" class="back-button">＜ 戻る</button>
   </div>
 
-  <h2 class="page-header">{{ tournamentName }} - 対戦表</h2>
+  <h2 class="page-header">{{ tournamentName }} - 参加者ページ</h2>
 
   <div *ngIf="message" class="message-banner">{{ message }}</div>
 
@@ -32,19 +32,28 @@
     <div *ngFor="let table of groupedMatchTables" class="card match-table">
       <h3 class="match-table-header">{{ table.tableName }}</h3>
       <div class="table-responsive">
+        <div class="table-responsive">
         <table>
           <thead>
             <tr>
-              <th *ngFor="let header of table.data[0]">{{ header }}</th>
+              <!-- The first column header (e.g., 'Round') -->
+              <th>{{ table.data[0][0] }}</th>
+              <!-- The second column header (e.g., 'Players') -->
+              <th>{{ table.data[0][1] }}</th>
+              <!-- The third column header (e.g., 'Bye'), with a class to hide it on mobile -->
+              <th class="bye-column">{{ table.data[0][2] }}</th>
+              <!-- The fourth column header (e.g., 'Schedule'), with a class to hide it on mobile -->
+              <th class="schedule-column">{{ table.data[0][3] }}</th>
+              <!-- The fifth column for actions -->
               <th>日程</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let row of table.data.slice(1)">
-              <!-- This cell is for the round number -->
+              <!-- Round Number -->
               <td>{{ row.displayCells[0] }}</td>
               
-              <!-- This cell is for the player list -->
+              <!-- Player List -->
               <td>
                 <div class="player-list">
                   <div *ngFor="let player of row.players" 
@@ -55,15 +64,17 @@
                 </div>
               </td>
 
-              <!-- This cell is for the bye players -->
-              <td>{{ row.displayCells[2] }}</td>
+              <!-- Bye Players (will be hidden on mobile) -->
+              <td class="bye-column">{{ row.displayCells[2] }}</td>
 
-              <!-- This cell is for the schedule period -->
-              <td>{{ row.displayCells[3] }}</td>
+              <!-- Schedule Period (will be hidden on mobile) -->
+              <td class="schedule-column">{{ row.displayCells[3] }}</td>
 
-              <!-- This cell is for the action buttons -->
+              <!-- Actions -->
               <td>
                 <div class="schedule-controls">
+                  <!-- Schedule period, shown only on mobile -->
+                  <div class="schedule-period-inline">{{ row.displayCells[3] }}</div>
                   <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
                   <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
                   <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">希望日入力</button>
@@ -72,6 +83,7 @@
             </tr>
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   </div>

@@ -81,3 +81,16 @@ button[type="submit"]:hover {
   color: #FF6666;
   border: 1px solid #FFB3B3;
 }
+
+@media (max-width: 768px) {
+  .tournament-entry-container {
+    margin: 0;
+    padding: 20px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .tournament-entry-container h2 {
+    font-size: 1.8rem;
+  }
+}

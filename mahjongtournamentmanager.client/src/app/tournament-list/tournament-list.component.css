@@ -57,7 +57,7 @@ h2 {
   flex-direction: column;
   border-left: 5px solid var(--card-accent-color, #007bff);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  height: 220px; /* Fixed height for the card */
+  height: auto; /* Fixed height for the card */
   overflow: hidden; /* Hide content that overflows the card */
 }
 
@@ -129,4 +129,20 @@ h2 {
   --accent-color-1: #007bff;
   --accent-color-2: #28a745;
   --accent-color-3: #ffc107;
+}
+
+@media (max-width: 768px) {
+  .tournament-list-container {
+    padding: 1rem;
+  }
+
+  .tournament-cards {
+    grid-template-columns: 1fr; /* On smaller screens, stack the cards */
+    justify-items: center; /* Center items on the grid */
+  }
+
+  .tournament-card {
+    width: 100%;
+    max-width: 400px; /* Optional: constrain max card width on mobile */
+  }
 }
