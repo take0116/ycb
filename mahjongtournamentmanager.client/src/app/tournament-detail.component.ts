@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AuthService } from './auth.service';
+import { Tournament } from './tournament';
 import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-tournament-detail',
-  templateUrl: './tournament-detail.component.html',
-  styleUrls: ['./tournament-detail.component.scss'],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule]
+  imports: [CommonModule, DatePipe, RouterModule],
+  templateUrl: './tournament-detail.component.html',
+  styleUrls: ['./tournament-detail.component.scss']
 })
 export class TournamentDetailComponent implements OnInit {
   private apiUrl = `${environment.apiUrl}/api/TournamentSettings`;
@@ -27,8 +27,7 @@ export class TournamentDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     public authService: AuthService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -56,7 +55,6 @@ export class TournamentDetailComponent implements OnInit {
     this.http.get<boolean>(`${this.apiUrl}/${tournamentId}/is-participating`).subscribe({
       next: data => {
         this.isParticipant = data;
-        this.cdr.detectChanges();
       },
       error: err => console.error(err)
     });
@@ -81,7 +79,6 @@ export class TournamentDetailComponent implements OnInit {
       next: () => {
         this.isParticipant = true;
         this.getParticipants();
-        this.cdr.detectChanges();
       },
       error: err => console.error(err)
     });

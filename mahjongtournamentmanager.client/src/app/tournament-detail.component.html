@@ -1,5 +1,9 @@
 <div class="mahjong-background">
   <div *ngIf="tournament" class="tournament-detail-container">
+    <div class="navigation-header">
+      <button routerLink="/event-list" class="back-button">＜ 戻る</button>
+    </div>
+
     <div class="mahjong-tile tournament-title">
       <h2>{{ tournament.tournamentName }}</h2>
     </div>

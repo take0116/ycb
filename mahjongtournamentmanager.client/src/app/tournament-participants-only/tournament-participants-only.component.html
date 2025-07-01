@@ -1,4 +1,8 @@
 <div class="participants-only-container">
+  <div class="navigation-header">
+    <button [routerLink]="['/events', tournamentId]" class="back-button">＜ 戻る</button>
+  </div>
+
   <h2 class="page-header">{{ tournamentName }} - 対戦表</h2>
 
   <div *ngIf="message" class="message-banner">{{ message }}</div>

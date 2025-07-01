@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +12,7 @@ import { map, catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-tournament-participants-only',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ScheduleCoordinatorComponent],
+  imports: [CommonModule, ReactiveFormsModule, ScheduleCoordinatorComponent, RouterModule],
   templateUrl: './tournament-participants-only.component.html',
   styleUrls: ['./tournament-participants-only.component.css']
 })
