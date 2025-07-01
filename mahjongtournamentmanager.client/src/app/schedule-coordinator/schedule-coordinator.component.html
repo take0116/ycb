@@ -10,7 +10,7 @@
       </div>
 
       <div class="time-only-section">
-        <h4>時間で指定</h4>
+        <h4>時間で指定 (毎日共通)</h4>
         <div class="time-slots-container">
           <div *ngFor="let time of timeSlots" class="time-slot-item">
             <input type="checkbox" [id]="'time-' + time" [checked]="isTimeSlotSelected(time)" (change)="toggleTimeSlot(time)">
@@ -25,61 +25,38 @@
           <span class="details-toggle-icon">{{ detailsOpen ? '▲' : '▼' }}</span>
         </h4>
         <div *ngIf="detailsOpen" class="details-content">
-          <!-- Week 1 Table -->
-          <table class="schedule-grid">
-            <thead>
-              <tr>
-                <th class="time-header">時間</th>
-                <th *ngFor="let date of week1Dates" class="date-header" [class.today]="isToday(date)">
-                  <span>{{ date | date:'M/d(E)' }}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let time of timeSlots">
-                <td class="time-slot">{{ time }}</td>
-                <td 
-                  *ngFor="let date of week1Dates" 
-                  class="availability-cell"
-                  [class.today]="isToday(date)"
-                  [class.selected]="isDateTimeSelected(date, time)"
-                  (click)="toggleDateTime(date, time)">
-                  <div class="availability-summary">
-                    <span class="availability-count">{{ getAvailabilityCount(date, time) }}</span>
-                    <span class="total-players">/ {{ players.length }}</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <!-- Week 2 Table -->
-          <table class="schedule-grid" style="margin-top: 20px;">
-            <thead>
-              <tr>
-                <th class="time-header">時間</th>
-                <th *ngFor="let date of week2Dates" class="date-header" [class.today]="isToday(date)">
-                  <span>{{ date | date:'M/d(E)' }}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let time of timeSlots">
-                <td class="time-slot">{{ time }}</td>
-                <td 
-                  *ngFor="let date of week2Dates" 
-                  class="availability-cell"
-                  [class.today]="isToday(date)"
-                  [class.selected]="isDateTimeSelected(date, time)"
-                  (click)="toggleDateTime(date, time)">
-                  <div class="availability-summary">
-                    <span class="availability-count">{{ getAvailabilityCount(date, time) }}</span>
-                    <span class="total-players">/ {{ players.length }}</span>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-responsive">
+            <table class="schedule-grid">
+              <thead>
+                <tr>
+                  <th class="date-header">日程</th>
+                  <th class="count-header">参加数</th>
+                  <th class="time-header">時間</th>
+                  <th *ngFor="let player of players" class="player-header">{{ player.name }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let day of structuredAvailabilities; let dayIndex = index">
+                  <tr *ngFor="let slot of day.slots; let slotIndex = index">
+                    <td *ngIf="slotIndex === 0" [attr.rowspan]="timeSlots.length" class="date-cell" [class.today]="isToday(day.date)">
+                      {{ formatDateWithJapaneseDay(day.date) }}
+                    </td>
+                    <td class="count-cell">
+                      <span class="availability-count">{{ getAvailabilityCount(day.date, slot.time) }}</span>
+                      <span class="total-players">/ {{ players.length }}</span>
+                    </td>
+                    <td class="time-cell">{{ slot.time }}</td>
+                    <td *ngFor="let player of players" 
+                        class="availability-cell"
+                        [class.available]="isAvailable(day.date, slot.time, player.id)"
+                        (click)="player.id === currentUserId && toggleAvailability(day.date, slot.time)">
+                      <span *ngIf="isAvailable(day.date, slot.time, player.id)">✔️</span>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

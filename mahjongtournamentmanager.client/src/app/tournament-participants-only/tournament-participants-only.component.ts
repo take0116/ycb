@@ -29,6 +29,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   isCoordinatorVisible = false;
   selectedRoundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
   selectedMatchPlayers: { id: string, name: string }[] = [];
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +42,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.hasRole('Admin');
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -170,6 +172,29 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
 
   closeCoordinator(): void {
     this.isCoordinatorVisible = false;
+  }
+
+  getSchedulePeriod(startDate: string | null): string {
+    if (!startDate) {
+      return '';
+    }
+    try {
+      const start = new Date(startDate);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 14); // 2週間後
+
+      const formatDate = (date: Date) => {
+        const y = date.getFullYear();
+        const m = ('0' + (date.getMonth() + 1)).slice(-2);
+        const d = ('0' + date.getDate()).slice(-2);
+        return `${y}/${m}/${d}`;
+      };
+
+      return `${formatDate(start)} - ${formatDate(end)}`;
+    } catch (e) {
+      console.error('Invalid date format for scheduling start date:', startDate);
+      return '期間の計算に失敗';
+    }
   }
 
   unlockMatchTable(): void {
