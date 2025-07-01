@@ -2,27 +2,20 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# 【改善点①】
-# プロジェクトファイル(*.csproj)だけを先にコピーする
-# .slnファイルがある場合はそれも先にコピーすると更に良い
-COPY ["MahjongTournamentManager.Server/MahjongTournamentManager.Server.csproj", "MahjongTournamentManager.Server/"]
+# 【変更点①】サーバープロジェクトのフォルダだけをコンテナにコピーする
+COPY ["MahjongTournamentManager.Server/", "MahjongTournamentManager.Server/"]
 
-# 【改善点②】
-# ソースコードをコピーする前に、依存関係の復元を済ませる
-# これにより、.csprojに変更がない限り、このステップはキャッシュが使われ、高速になる
-RUN dotnet restore "MahjongTournamentManager.Server/MahjongTournamentManager.Server.csproj"
+# サーバープロジェクトのディレクトリに移動
+WORKDIR /src/MahjongTournamentManager.Server
 
-# ここでソースコード全体をコピーする
-COPY . .
-WORKDIR "/src/MahjongTournamentManager.Server"
-RUN dotnet build "MahjongTournamentManager.Server.csproj" -c Release -o /app/build
+# 依存関係の復元
+RUN dotnet restore "MahjongTournamentManager.Server.csproj"
 
-# 2. 発行(Publish)ステージ
-FROM build AS publish
-RUN dotnet publish "MahjongTournamentManager.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
+# 発行(Publish)。buildはpublishコマンドに含まれるため、publishだけでOK
+RUN dotnet publish "MahjongTournamentManager.Server.csproj" -c Release -o /app/publish
 
-# 3. 実行環境 (ランタイムイメージ)
+# 2. 実行環境 (ランタイムイメージ)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "MahjongTournamentManager.Server.dll"]
