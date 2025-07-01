@@ -1,0 +1,23 @@
+# 1. ビルド環境の指定
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# プロジェクトファイルをコピーして、依存関係を復元
+COPY ["MahjongTournamentManager.Server/MahjongTournamentManager.Server.csproj", "MahjongTournamentManager.Server/"]
+# 他にもプロジェクトがあれば同様にコピー
+RUN dotnet restore "MahjongTournamentManager.Server/MahjongTournamentManager.Server.csproj"
+
+# 全てのソースコードをコピー
+COPY . .
+WORKDIR "/src/MahjongTournamentManager.Server"
+RUN dotnet build "MahjongTournamentManager.Server.csproj" -c Release -o /app/build
+
+# 2. 発行(Publish)
+FROM build AS publish
+RUN dotnet publish "MahjongTournamentManager.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+# 3. 実行環境の指定
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "MahjongTournamentManager.Server.dll"]
