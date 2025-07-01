@@ -1,52 +1,55 @@
 <div class="participants-only-container">
-  <h2>{{ tournamentName }} - 対戦表</h2>
+  <h2 class="page-header">{{ tournamentName }} - 対戦表</h2>
 
   <div *ngIf="message" class="message-banner">{{ message }}</div>
 
-  <div class="participants-section">
-    <h3 (click)="toggleParticipantsVisibility()">
-      参加者一覧
-      <span class="toggle-icon">{{ isParticipantsVisible ? '▲' : '▼' }}</span>
-    </h3>
-    <ul *ngIf="isParticipantsVisible">
-      <li *ngFor="let participant of participants">{{ participant.user.userName }}</li>
+  <div class="card participants-section">
+    <div class="card-header" (click)="toggleParticipantsVisibility()">
+      <span>参加者一覧</span>
+      <span class="toggle-icon" [style.transform]="isParticipantsVisible ? 'rotate(180deg)' : ''">▼</span>
+    </div>
+    <ul *ngIf="isParticipantsVisible" class="participants-list">
+      <li *ngFor="let participant of participants" class="participant-tag">{{ participant.user.userName }}</li>
     </ul>
   </div>
 
-  <div *ngIf="!isTableSaved && isAdmin" class="match-generation-section">
-    <h4>対戦表を作成</h4>
+  <div *ngIf="!isTableSaved && isAdmin" class="card match-generation-section">
+    <h4 class="card-header">対戦表を作成</h4>
     <form [formGroup]="matchSettingsForm" (ngSubmit)="generateMatchTable()">
       <div class="form-group">
         <label for="minMatches">最低試合数:</label>
         <input type="number" id="minMatches" formControlName="minMatchesPerParticipant">
       </div>
-      <button type="submit" class="mahjong-button">生成</button>
+      <button type="submit" class="mahjong-button primary-button">生成</button>
     </form>
   </div>
 
   <div *ngIf="groupedMatchTables.length > 0" class="match-tables-section">
-    <div *ngFor="let table of groupedMatchTables" class="match-table">
-      <h4>{{ table.tableName }}</h4>
-      <table>
-        <thead>
-          <tr>
-            <th *ngFor="let header of table.data[0]">{{ header }}</th>
-            <th>日程調整</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of table.data.slice(1)">
-            <td *ngFor="let cell of row.displayCells">{{ cell }}</td>
-            <td>
-              <div class="schedule-controls">
-                <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
-                <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
-                <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">調整</button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div *ngFor="let table of groupedMatchTables" class="card match-table">
+      <h3 class="match-table-header">{{ table.tableName }}</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th *ngFor="let header of table.data[0]">{{ header }}</th>
+              <th>日程</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of table.data.slice(1)">
+              <td *ngFor="let cell of row.displayCells">{{ cell }}</td>
+              <td>
+                <div class="schedule-controls">
+                  <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
+                  <div *ngIf="row.schedulingStartDate" class="schedule-period">{{ getSchedulePeriod(row.schedulingStartDate) }}</div>
+                  <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
+                  <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">参加可能日登録</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

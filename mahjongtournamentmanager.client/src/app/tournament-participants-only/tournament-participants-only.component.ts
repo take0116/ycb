@@ -174,6 +174,29 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     this.isCoordinatorVisible = false;
   }
 
+  getSchedulePeriod(startDate: string | null): string {
+    if (!startDate) {
+      return '';
+    }
+    try {
+      const start = new Date(startDate);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 14); // 2週間後
+
+      const formatDate = (date: Date) => {
+        const y = date.getFullYear();
+        const m = ('0' + (date.getMonth() + 1)).slice(-2);
+        const d = ('0' + date.getDate()).slice(-2);
+        return `${y}/${m}/${d}`;
+      };
+
+      return `${formatDate(start)} - ${formatDate(end)}`;
+    } catch (e) {
+      console.error('Invalid date format for scheduling start date:', startDate);
+      return '期間の計算に失敗';
+    }
+  }
+
   unlockMatchTable(): void {
     if (!this.tournamentId) return;
     this.http.post(`${this.apiUrl}/${this.tournamentId}/unlock-match-table`, {}).subscribe({
