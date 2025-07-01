@@ -273,16 +273,13 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       return { tableName, data: [headerRow] };
     });
 
+    // --- Case with no byes (simple logic) ---
     if (numByesPerRound === 0) {
-      let round = 1;
-      const matchCounts: { [key: string]: number } = Object.fromEntries(allParticipantNames.map(name => [name, 0]));
-      while (Object.values(matchCounts).some(c => c < minMatchesPerParticipant)) {
-        if (round > 200) { this.message = '対戦数が多すぎるため中断しました。'; break; }
+      const totalRounds = minMatchesPerParticipant;
+      for (let round = 1; round <= totalRounds; round++) {
         let playingThisRound = this.shuffleArray([...allParticipantNames]);
         for (let t = 0; t < numSimultaneousTables; t++) {
           const matchPlayerNames = playingThisRound.splice(0, numPlayersPerMatch);
-          matchPlayerNames.forEach(p => matchCounts[p]++);
-          
           const matchPlayers = allParticipants.filter(p => matchPlayerNames.includes(p.name));
           const rowData = {
             matchId: 0,
@@ -292,29 +289,37 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
           };
           this.groupedMatchTables[t].data.push(rowData);
         }
-        round++;
       }
-      this.message = `${round - 1}回戦の対戦表を生成しました。`;
+      this.message = `${totalRounds}回戦の対戦表を生成しました。`;
       return;
     }
 
-    const roundsInOneCycle = this.lcm(numByesPerRound, numActualParticipants) / numByesPerRound;
-    const matchesInOneCycle = roundsInOneCycle - (roundsInOneCycle * numByesPerRound / numActualParticipants);
-    
-    let cyclesNeeded = 1;
-    if (matchesInOneCycle > 0) {
-      cyclesNeeded = Math.ceil(minMatchesPerParticipant / matchesInOneCycle);
-    }
-    
-    const totalRounds = roundsInOneCycle * cyclesNeeded;
+    // --- Case with byes (GUARANTEED FAIR LOGIC) ---
+    // Calculate the number of rounds for one full, fair bye rotation.
+    const roundsInOneFairCycle = numActualParticipants / this.gcd(numActualParticipants, numByesPerRound);
 
-    let byePool: string[] = [];
-    for (let i = 0; i < cyclesNeeded; i++) {
-      byePool.push(...this.shuffleArray([...allParticipantNames]));
+    // Calculate how many matches each person plays in that one cycle.
+    const matchesPerParticipantInCycle = roundsInOneFairCycle - (roundsInOneFairCycle * numByesPerRound / numActualParticipants);
+
+    if (matchesPerParticipantInCycle <= 0) {
+        this.message = '対戦設定が不正です。試合が成立しません。';
+        return;
     }
+    // Determine how many full cycles are needed to meet the minimum match requirement.
+    const cyclesNeeded = Math.ceil(minMatchesPerParticipant / matchesPerParticipantInCycle);
+
+    // The total rounds must be a multiple of the fair cycle length to ensure equal byes.
+    const totalRounds = roundsInOneFairCycle * cyclesNeeded;
+
+    // Use a circular queue for fair bye distribution
+    let byeCandidates = this.shuffleArray([...allParticipantNames]);
 
     for (let round = 1; round <= totalRounds; round++) {
-      const byesThisRound = byePool.splice(0, numByesPerRound);
+      // Select byes from the front of the queue
+      const byesThisRound = byeCandidates.slice(0, numByesPerRound);
+      // Rotate the queue for the next round
+      byeCandidates = [...byeCandidates.slice(numByesPerRound), ...byesThisRound];
+
       const playingThisRoundNames = this.shuffleArray(allParticipantNames.filter(p => !byesThisRound.includes(p)));
       const byeDisplayString = byesThisRound.join(', ') || '-';
 
@@ -333,6 +338,6 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     }
     
     const finalMatchCount = totalRounds - (totalRounds * numByesPerRound / numActualParticipants);
-    this.message = `全参加者の抜け番回数を均等にし、最低${minMatchesPerParticipant}試合を保証するため、${totalRounds}回戦（1人あたり${finalMatchCount}試合）の対戦表を生成しました。`;
+    this.message = `全参加者の抜け番回数を完全に均等にするため、${totalRounds}回戦（1人あたり${finalMatchCount}試合）の対戦表を生成しました。`;
   }
 }
