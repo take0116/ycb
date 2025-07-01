@@ -39,6 +39,9 @@ if (builder.Environment.IsProduction())
 {
     // 本番環境の場合は、DATABASE_URL環境変数から値を取得
     var databaseUrl = builder.Configuration.GetValue<string>("DATABASE_URL");
+
+    throw new Exception($"[DEBUG] The actual connection string value is: '{databaseUrl}'");
+
     if (string.IsNullOrEmpty(databaseUrl))
     {
         throw new InvalidOperationException("DATABASE_URL environment variable is not set in Production environment.");
@@ -50,8 +53,6 @@ else
     // 開発環境の場合は、appsettings.jsonから値を取得
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 }
-
-throw new Exception($"[DEBUG] The actual connection string value is: '{connectionString}'");
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
