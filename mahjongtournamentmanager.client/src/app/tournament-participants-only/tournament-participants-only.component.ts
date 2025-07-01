@@ -97,23 +97,18 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       if (!tableNumber) return;
       const tableName = String.fromCharCode(64 + tableNumber) + '卓';
       if (!tables[tableName]) {
-        const headerRow = ['№', ...Array.from({ length: this.playerCount }, (_, i) => `ユーザー名${i + 1}`), '抜け番'];
+        const headerRow = ['№', '対戦ユーザー', '抜け番', '開催期間'];
         tables[tableName] = { tableName, data: [headerRow] };
       }
       
       const playerInfo = match.mahjongMatchPlayers.map((p: any) => ({ id: p.user.id, name: p.user.userName }));
       const playerNames = playerInfo.map((p: any) => p.name);
       
-      const paddedPlayerNames = [...playerNames];
-      while (paddedPlayerNames.length < this.playerCount) {
-        paddedPlayerNames.push('-');
-      }
-
       const rowData = {
         matchId: match.id,
         round: match.round.toString(),
         players: playerInfo,
-        displayCells: [match.round.toString(), ...paddedPlayerNames, match.byePlayerUserNames || '-'],
+        displayCells: [match.round.toString(), playerNames.join(', '), match.byePlayerUserNames || '-', this.getSchedulePeriod(match.schedulingStartDate)],
         schedulingStartDate: match.schedulingStartDate
       };
       
@@ -151,6 +146,14 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       next: () => {
         this.message = `第${row.round}回戦の日程調整開始日を保存しました。`;
         row.schedulingStartDate = dateInput.value || null;
+        // Manually update the display cell for the schedule period
+        const tableData = this.groupedMatchTables.find(t => t.tableName === tableName)?.data;
+        if (tableData) {
+          const rowIndex = tableData.findIndex(r => !Array.isArray(r) && r.matchId === row.matchId);
+          if (rowIndex > -1) {
+            tableData[rowIndex].displayCells[3] = this.getSchedulePeriod(row.schedulingStartDate);
+          }
+        }
       },
       error: (err) => {
         console.error(err);
@@ -184,10 +187,9 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       end.setDate(start.getDate() + 14); // 2週間後
 
       const formatDate = (date: Date) => {
-        const y = date.getFullYear();
         const m = ('0' + (date.getMonth() + 1)).slice(-2);
         const d = ('0' + date.getDate()).slice(-2);
-        return `${y}/${m}/${d}`;
+        return `${m}/${d}`;
       };
 
       return `${formatDate(start)} - ${formatDate(end)}`;
@@ -267,7 +269,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
 
     this.groupedMatchTables = Array.from({ length: numSimultaneousTables }, (_, t) => {
       const tableName = String.fromCharCode(65 + t) + '卓';
-      const headerRow = ['№', ...Array.from({ length: numPlayersPerMatch }, (__, i) => `ユーザー名${i + 1}`), '抜け番'];
+      const headerRow = ['№', '対戦ユーザー', '抜け番', '開催期間'];
       return { tableName, data: [headerRow] };
     });
 
@@ -286,7 +288,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
             matchId: 0,
             round: round.toString(),
             players: matchPlayers,
-            displayCells: [`${round}`, ...matchPlayerNames, '-']
+            displayCells: [`${round}`, matchPlayerNames.join(', '), '-', '']
           };
           this.groupedMatchTables[t].data.push(rowData);
         }
@@ -320,16 +322,11 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
         const matchPlayerNames = playingThisRoundNames.splice(0, numPlayersPerMatch);
         const matchPlayers = allParticipants.filter(p => matchPlayerNames.includes(p.name));
         
-        const paddedPlayerNames = [...matchPlayerNames];
-        while (paddedPlayerNames.length < numPlayersPerMatch) {
-            paddedPlayerNames.push('-');
-        }
-
         const rowData = {
             matchId: 0,
             round: round.toString(),
             players: matchPlayers,
-            displayCells: [`${round}`, ...paddedPlayerNames, byeDisplayString]
+            displayCells: [`${round}`, matchPlayerNames.join(', '), byeDisplayString, '']
         };
         this.groupedMatchTables[t].data.push(rowData);
       }

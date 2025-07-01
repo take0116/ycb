@@ -37,13 +37,19 @@
           </thead>
           <tbody>
             <tr *ngFor="let row of table.data.slice(1)">
-              <td *ngFor="let cell of row.displayCells">{{ cell }}</td>
+              <td *ngFor="let cell of row.displayCells; let i = index">
+                <ng-container *ngIf="i === 1; else defaultCell">
+                  <div class="player-list">
+                    <div *ngFor="let name of cell.split(', ')" class="player-name">{{ name }}</div>
+                  </div>
+                </ng-container>
+                <ng-template #defaultCell>{{ cell }}</ng-template>
+              </td>
               <td>
                 <div class="schedule-controls">
                   <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
-                  <div *ngIf="row.schedulingStartDate" class="schedule-period">{{ getSchedulePeriod(row.schedulingStartDate) }}</div>
                   <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
-                  <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">参加可能日登録</button>
+                  <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">希望日入力</button>
                 </div>
               </td>
             </tr>
