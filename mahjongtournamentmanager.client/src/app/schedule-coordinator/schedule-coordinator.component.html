@@ -1,0 +1,91 @@
+<div class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>第{{ roundInfo?.round }}回戦 日程調整</h3>
+      <button class="close-button" (click)="closeDialog()">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="adjustment-period">
+        <strong>調整期間:</strong> {{ schedulingStartDate | date:'yyyy/MM/dd' }} - {{ schedulingEndDate | date:'yyyy/MM/dd' }}
+      </div>
+
+      <div class="time-only-section">
+        <h4>時間で指定</h4>
+        <div class="time-slots-container">
+          <div *ngFor="let time of timeSlots" class="time-slot-item">
+            <input type="checkbox" [id]="'time-' + time" [checked]="isTimeSlotSelected(time)" (change)="toggleTimeSlot(time)">
+            <label [for]="'time-' + time">{{ time }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="date-time-section">
+        <h4 (click)="toggleDetails()" class="details-header">
+          カレンダーで指定
+          <span class="details-toggle-icon">{{ detailsOpen ? '▲' : '▼' }}</span>
+        </h4>
+        <div *ngIf="detailsOpen" class="details-content">
+          <!-- Week 1 Table -->
+          <table class="schedule-grid">
+            <thead>
+              <tr>
+                <th class="time-header">時間</th>
+                <th *ngFor="let date of week1Dates" class="date-header" [class.today]="isToday(date)">
+                  <span>{{ date | date:'M/d(E)' }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let time of timeSlots">
+                <td class="time-slot">{{ time }}</td>
+                <td 
+                  *ngFor="let date of week1Dates" 
+                  class="availability-cell"
+                  [class.today]="isToday(date)"
+                  [class.selected]="isDateTimeSelected(date, time)"
+                  (click)="toggleDateTime(date, time)">
+                  <div class="availability-summary">
+                    <span class="availability-count">{{ getAvailabilityCount(date, time) }}</span>
+                    <span class="total-players">/ {{ players.length }}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Week 2 Table -->
+          <table class="schedule-grid" style="margin-top: 20px;">
+            <thead>
+              <tr>
+                <th class="time-header">時間</th>
+                <th *ngFor="let date of week2Dates" class="date-header" [class.today]="isToday(date)">
+                  <span>{{ date | date:'M/d(E)' }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let time of timeSlots">
+                <td class="time-slot">{{ time }}</td>
+                <td 
+                  *ngFor="let date of week2Dates" 
+                  class="availability-cell"
+                  [class.today]="isToday(date)"
+                  [class.selected]="isDateTimeSelected(date, time)"
+                  (click)="toggleDateTime(date, time)">
+                  <div class="availability-summary">
+                    <span class="availability-count">{{ getAvailabilityCount(date, time) }}</span>
+                    <span class="total-players">/ {{ players.length }}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="mahjong-button" (click)="saveAvailabilities()">保存</button>
+      <button class="mahjong-button" (click)="closeDialog()">閉じる</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,95 @@
+.participants-only-container {
+  padding: 20px;
+}
+
+.message-banner {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-left: 5px solid #4285F4;
+  margin-bottom: 20px;
+}
+
+.participants-section h3 {
+  cursor: pointer;
+}
+
+.match-generation-section {
+  margin-bottom: 20px;
+}
+
+.match-tables-section {
+  margin-top: 20px;
+}
+
+.match-table {
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.schedule-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.mahjong-button {
+  /* Base styles from other components */
+  display: inline-block;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-button {
+  background-color: #0F9D58; /* Green */
+}
+
+.save-button:hover {
+  background-color: #0a6d3d;
+}
+
+.adjust-button {
+  background-color: #4285F4; /* Blue */
+}
+
+.adjust-button:hover {
+  background-color: #3367d6;
+}
+
+.primary-button {
+  background-color: #4285F4; /* Blue */
+}
+
+.primary-button:hover {
+  background-color: #3367d6;
+}
+
+.danger-button {
+  background-color: #DB4437; /* Red */
+}
+
+.danger-button:hover {
+  background-color: #b0332a;
+}

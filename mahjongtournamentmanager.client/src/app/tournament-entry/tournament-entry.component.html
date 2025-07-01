@@ -1,0 +1,15 @@
+<div class="container">
+  <h2>大会エントリー</h2>
+  <div *ngIf="tournamentId">
+    <p>大会ID: {{ tournamentId }}</p>
+  </div>
+
+  <form [formGroup]="entryForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="comment">コメント (任意):</label>
+      <textarea id="comment" formControlName="comment" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!entryForm.valid">エントリー</button>
+  </form>
+</div>

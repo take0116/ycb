@@ -1,0 +1,131 @@
+.tournament-detail-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+}
+
+h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.detail-section {
+  background-color: #f0f2f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.detail-section h3 {
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.detail-section p {
+  margin-bottom: 5px;
+}
+
+.action-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.join-button,
+.delete-button,
+.edit-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+}
+
+.join-button {
+  background-color: #007bff;
+}
+
+.join-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.edit-button {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+.participants-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.participants-table th,
+.participants-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.participants-table tbody tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+.participants-table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.participants-table th {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.remove-participant-button {
+  background-color: #ffc107;
+  color: #333;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.remove-participant-button:hover {
+  background-color: #e0a800;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.1em;
+  color: #666;
+}
+
+.error-message {
+  color: #dc3545;
+}
+
+.actions-column {
+  text-align: right;
+}

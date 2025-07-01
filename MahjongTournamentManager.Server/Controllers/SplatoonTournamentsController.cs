@@ -1,0 +1,163 @@
+using Microsoft.AspNetCore.Mvc;
+using MahjongTournamentManager.Server.Data;
+using MahjongTournamentManager.Server.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Collections.Generic;
+
+namespace MahjongTournamentManager.Server.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class SplatoonTournamentsController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public SplatoonTournamentsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult<SplatoonTournament>> PostSplatoonTournament(SplatoonTournament splatoonTournament)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.SplatoonTournaments.Add(splatoonTournament);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetSplatoonTournament), new { id = splatoonTournament.Id }, splatoonTournament);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SplatoonTournament>> GetSplatoonTournament(int id)
+        {
+            var tournament = await _context.SplatoonTournaments.FindAsync(id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            return tournament;
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteSplatoonTournament(int id)
+        {
+            var tournament = await _context.SplatoonTournaments.FindAsync(id);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            _context.SplatoonTournaments.Remove(tournament);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("{id}/join")]
+        [Authorize]
+        public async Task<IActionResult> JoinTournament(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var tournamentExists = await _context.SplatoonTournaments.AnyAsync(t => t.Id == id);
+            if (!tournamentExists)
+            {
+                return NotFound("Tournament not found.");
+            }
+
+            var alreadyJoined = await _context.SplatoonParticipants
+                .AnyAsync(p => p.SplatoonTournamentId == id && p.UserId == userId);
+            if (alreadyJoined)
+            {
+                return BadRequest("Already joined this tournament.");
+            }
+
+            var participant = new SplatoonParticipant
+            {
+                SplatoonTournamentId = id,
+                UserId = userId,
+                JoinedDate = System.DateTime.UtcNow
+            };
+
+            _context.SplatoonParticipants.Add(participant);
+            await _context.SaveChangesAsync();
+
+            return Ok("Joined tournament successfully.");
+        }
+
+        [HttpGet("{id}/participants")]
+        [Authorize]
+        public async Task<ActionResult<SplatoonTournamentParticipantsResponse>> GetParticipants(int id)
+        {
+            var tournament = await _context.SplatoonTournaments.FindAsync(id);
+            if (tournament == null)
+            {
+                return NotFound("Tournament not found.");
+            }
+
+            var participants = await _context.SplatoonParticipants
+                .Where(p => p.SplatoonTournamentId == id)
+                .Include(p => p.User)
+                .ToListAsync();
+
+            var response = new SplatoonTournamentParticipantsResponse
+            {
+                TournamentName = tournament.TournamentName,
+                Participants = participants
+            };
+
+            return response;
+        }
+
+        [HttpGet("{id}/is-participating")]
+        [Authorize]
+        public async Task<ActionResult<bool>> IsUserParticipating(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            if (userId == null)
+            {
+                return false;
+            }
+
+            return await _context.SplatoonParticipants
+                .AnyAsync(p => p.SplatoonTournamentId == id && p.UserId == userId);
+        }
+
+        [HttpDelete("{tournamentId}/participants/{participantUserId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveParticipant(int tournamentId, string participantUserId)
+        {
+            var participant = await _context.SplatoonParticipants
+                .FirstOrDefaultAsync(p => p.SplatoonTournamentId == tournamentId && p.UserId == participantUserId);
+
+            if (participant == null)
+            {
+                return NotFound("Participant not found in this tournament.");
+            }
+
+            _context.SplatoonParticipants.Remove(participant);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+    }
+}

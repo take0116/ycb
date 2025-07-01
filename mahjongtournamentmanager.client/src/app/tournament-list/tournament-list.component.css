@@ -1,0 +1,133 @@
+/* tournament-list.component.css */
+.tournament-list-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.no-tournaments, .error-message {
+  text-align: center;
+  color: #666;
+  margin-top: 2rem;
+}
+
+.tournament-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.tournament-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid var(--card-accent-color, #007bff);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  height: 220px; /* Fixed height for the card */
+  overflow: hidden; /* Hide content that overflows the card */
+}
+
+.tournament-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.game-title {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #555;
+  background-color: #eee;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+}
+
+.tournament-card h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.tournament-description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    word-break: break-all; /* Break long words */
+    line-height: 1.5em; /* Set a base line-height for calculation */
+}
+
+.status-badge {
+  padding: 0.3em 0.6em;
+  border-radius: 0.25rem;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.status-planning { background-color: #6c757d; }
+.status-recruiting { background-color: #28a745; }
+.status-recruitment-closed { background-color: #ffc107; color: #212529; }
+.status-finished { background-color: #dc3545; }
+
+.detail-button {
+  display: inline-block;
+  margin-top: auto;
+  padding: 0.5rem 1rem;
+  background-color: var(--card-accent-color, #007bff);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.detail-button:hover {
+  background-color: #0056b3;
+}
+
+:root {
+  --accent-color-1: #007bff;
+  --accent-color-2: #28a745;
+  --accent-color-3: #ffc107;
+}

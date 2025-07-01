@@ -1,0 +1,20 @@
+<div class="auth-container">
+  <img src="assets/icons/ycb_logo.svg" alt="YCBチャンネル" style="height: 80px; margin-bottom: 20px;">
+  <form (ngSubmit)="login()">
+    <div class="form-group">
+      <label for="username">ユーザー名:</label>
+      <input type="text" id="username" [(ngModel)]="model.username" name="username" required>
+    </div>
+    <div class="form-group">
+      <label for="password">パスワード:</label>
+      <input type="password" id="password" [(ngModel)]="model.password" name="password" required>
+    </div>
+    <button type="submit">ログイン</button>
+  </form>
+  <div class="register-link-container">
+    <a [routerLink]="['/register']" class="subtle-link">新規登録</a>
+  </div>
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+</div>

@@ -1,0 +1,21 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
+
+namespace MahjongTournamentManager.Server.Models
+{
+    public class MahjongMatchPlayer
+    {
+        public int Id { get; set; }
+
+        [Required]
+        public int MahjongMatchId { get; set; }
+        public MahjongMatch MahjongMatch { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+        public IdentityUser User { get; set; }
+
+        [Required]
+        public int TableNumber { get; set; } // e.g., 1 for Table A, 2 for Table B
+    }
+}

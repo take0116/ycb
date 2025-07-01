@@ -1,0 +1,134 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.dialog-body {
+  overflow-y: auto;
+  padding-right: 15px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.adjustment-period,
+.time-only-section,
+.date-time-section {
+  margin-bottom: 20px;
+}
+
+.time-slots-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.time-slot-item {
+  display: flex;
+  align-items: center;
+}
+
+.details-header {
+  cursor: pointer;
+  user-select: none;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.details-header:hover {
+  background-color: #e0e0e0;
+}
+
+.details-toggle-icon {
+  margin-left: 10px;
+}
+
+.schedule-grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.schedule-grid th, .schedule-grid td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.date-header {
+  background-color: #f7f7f7;
+  font-weight: bold;
+}
+
+.date-header.today {
+  background-color: #fffbe6;
+  color: #c49000;
+}
+
+.time-slot {
+  background-color: #f7f7f7;
+  font-weight: bold;
+}
+
+.availability-cell {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.availability-cell:hover {
+  background-color: #e9e9e9;
+}
+
+.availability-cell.selected {
+  background-color: #a0e9a0;
+  font-weight: bold;
+}
+
+.availability-cell.today {
+  border-left: 2px solid #ffd700;
+  border-right: 2px solid #ffd700;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  flex-shrink: 0;
+}

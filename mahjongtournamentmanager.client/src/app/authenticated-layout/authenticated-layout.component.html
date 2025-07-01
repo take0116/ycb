@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 container-fluid">
+  <div class="navbar-content d-flex justify-content-between align-items-center w-100">
+    <a class="navbar-brand" [routerLink]="['/']">
+      <img src="assets/icons/ycb_logo.svg" alt="YCBチャンネル" style="height: 32px;">
+    </a>
+    
+    
+    <div
+      class="navbar-collapse collapse d-sm-inline-flex justify-content-end"
+      [ngClass]="{ show: isExpanded }"
+    >
+      <ul class="navbar-nav flex-grow">
+        
+        <li class="nav-item" [routerLinkActive]="['link-active']">
+          <a class="nav-link text-dark" [routerLink]="['/events']"
+            >イベント一覧</a
+          >
+        </li>
+        <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="authService.hasRole('Admin')">
+          <a class="nav-link text-dark" [routerLink]="['/create-event']"
+            >企画作成</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" (click)="logout()">ログアウト</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

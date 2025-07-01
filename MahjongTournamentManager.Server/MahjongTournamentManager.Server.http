@@ -1,0 +1,6 @@
+@MahjongTournamentManager.Server_HostAddress = http://localhost:5089
+
+GET {{MahjongTournamentManager.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
