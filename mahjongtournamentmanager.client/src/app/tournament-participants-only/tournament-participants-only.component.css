@@ -10,6 +10,30 @@
   padding: 0 1.5rem;
 }
 
+.navigation-header {
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.back-button {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #555;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-button:hover {
+  background-color: #f0f0f0;
+  border-color: #aaa;
+}
+
 .page-header {
   font-size: 2.5rem;
   font-weight: 700;
@@ -201,7 +225,7 @@ tbody td {
   justify-content: flex-end;
 }
 
-.mahjong-button {
+.action-buttons .mahjong-button {
   padding: 0.8rem 1.8rem;
   border: none;
   border-radius: 8px;
@@ -211,7 +235,7 @@ tbody td {
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
 }
-.mahjong-button:hover {
+.action-buttons .mahjong-button:hover {
   filter: brightness(1.1);
 }
 
