@@ -20,7 +20,8 @@ string ConvertDatabaseUrlToConnectionString(string databaseUrl)
     var builder = new Npgsql.NpgsqlConnectionStringBuilder
     {
         Host = uri.Host,
-        Port = uri.Port,
+        // ポートがURLに含まれていない場合(-1)は、PostgreSQLのデフォルトポート5432を使用する
+        Port = uri.Port > 0 ? uri.Port : 5432,
         Username = userInfo[0],
         Password = userInfo[1],
         Database = uri.AbsolutePath.TrimStart('/'),
@@ -31,7 +32,6 @@ string ConvertDatabaseUrlToConnectionString(string databaseUrl)
     return builder.ToString();
 }
 
-// 環境変数から接続文字列（データベースURL）を取得
 string connectionString;
 
 // 本番環境(Render)かどうかを判定
@@ -39,9 +39,6 @@ if (builder.Environment.IsProduction())
 {
     // 本番環境の場合は、DATABASE_URL環境変数から値を取得
     var databaseUrl = builder.Configuration.GetValue<string>("DATABASE_URL");
-
-    throw new Exception($"[DEBUG] The actual connection string value is: '{databaseUrl}'");
-
     if (string.IsNullOrEmpty(databaseUrl))
     {
         throw new InvalidOperationException("DATABASE_URL environment variable is not set in Production environment.");
