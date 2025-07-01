@@ -24,7 +24,6 @@ string ConvertDatabaseUrlToConnectionString(string databaseUrl)
         Username = userInfo[0],
         Password = userInfo[1],
         Database = uri.AbsolutePath.TrimStart('/'),
-        // クラウドDB接続に推奨されるSSL設定
         SslMode = Npgsql.SslMode.Require,
         TrustServerCertificate = true
     };
@@ -33,15 +32,23 @@ string ConvertDatabaseUrlToConnectionString(string databaseUrl)
 }
 
 // 環境変数から接続文字列（データベースURL）を取得
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString;
 
-// もし接続文字列が取得でき、それがRenderのURL形式なら変換する
-if (!string.IsNullOrEmpty(connectionString))
+// 本番環境(Render)かどうかを判定
+if (builder.Environment.IsProduction())
 {
-    if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri) && uri.Scheme.StartsWith("postgres"))
+    // 本番環境の場合は、DATABASE_URL環境変数から値を取得
+    var databaseUrl = builder.Configuration.GetValue<string>("DATABASE_URL");
+    if (string.IsNullOrEmpty(databaseUrl))
     {
-        connectionString = ConvertDatabaseUrlToConnectionString(connectionString);
+        throw new InvalidOperationException("DATABASE_URL environment variable is not set in Production environment.");
     }
+    connectionString = ConvertDatabaseUrlToConnectionString(databaseUrl);
+}
+else
+{
+    // 開発環境の場合は、appsettings.jsonから値を取得
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 }
 
 // Add services to the container.
