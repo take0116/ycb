@@ -32,7 +32,7 @@
                   <th class="date-header">日程</th>
                   <th class="count-header">参加数</th>
                   <th class="time-header">時間</th>
-                  <th *ngFor="let player of players" class="player-header">{{ player.name }}</th>
+                  <th *ngFor="let player of players" class="player-header" [class.current-user-col]="player.id === currentUserId">{{ player.name }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -48,6 +48,7 @@
                     <td class="time-cell">{{ slot.time }}</td>
                     <td *ngFor="let player of players" 
                         class="availability-cell"
+                        [class.current-user-col]="player.id === currentUserId"
                         [class.available]="isAvailable(day.date, slot.time, player.id)"
                         (click)="player.id === currentUserId && toggleAvailability(day.date, slot.time)">
                       <span *ngIf="isAvailable(day.date, slot.time, player.id)">✔️</span>

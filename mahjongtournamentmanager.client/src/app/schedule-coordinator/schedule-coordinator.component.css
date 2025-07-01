@@ -102,12 +102,17 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 1.5rem;
+  table-layout: fixed;
 }
 
 .schedule-grid th, .schedule-grid td {
   border: 1px solid #e9ecef;
+  padding: 0.75rem;
   text-align: center;
   vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .schedule-grid thead th {
@@ -119,6 +124,10 @@
   z-index: 10;
   border-bottom: 1px solid #4a627a;
 }
+
+.date-cell, .date-header { width: 120px; }
+.count-cell, .count-header { width: 90px; }
+.time-cell, .time-header { width: 90px; }
 
 .date-cell {
   font-weight: 600;
@@ -147,22 +156,32 @@
 }
 
 .availability-cell {
-  width: 60px; /* Fixed width for user columns */
-  height: 50px;
   font-size: 1.5rem;
   color: #2ecc71;
 }
 
-.availability-cell[class*="current-user-"] {
+.current-user-col {
+  background-color: #fffbe6; /* Using the same "today" highlight color for consistency */
+}
+
+.availability-cell.current-user-col {
   cursor: pointer;
   transition: background-color 0.2s;
 }
-.availability-cell[class*="current-user-"]:hover {
-  background-color: #e9f5ff;
+.availability-cell.current-user-col:hover {
+  background-color: #fcf8e3; /* A slightly different shade for hover */
 }
 
 .availability-cell.available {
   background-color: #d4edda;
+}
+
+/* When a cell in the current user's column is also available */
+.availability-cell.current-user-col.available {
+  background-color: #a0e9a0; /* A more vibrant green */
+}
+.availability-cell.current-user-col.available:hover {
+  background-color: #8fdc8f; /* A slightly darker green on hover */
 }
 
 .dialog-footer {

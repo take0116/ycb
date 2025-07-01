@@ -155,6 +155,17 @@ tbody td {
     color: #555;
 }
 
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* Adjust spacing between names */
+  text-align: center; /* Align names to the left within the cell */
+}
+
+.player-name {
+  white-space: nowrap;
+}
+
 .schedule-controls {
   display: flex;
   flex-direction: column;
