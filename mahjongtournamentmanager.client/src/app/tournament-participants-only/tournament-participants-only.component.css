@@ -40,6 +40,7 @@ th, td {
   display: flex;
   gap: 10px;
   align-items: center;
+  justify-content: center;
 }
 
 .action-buttons {
@@ -66,30 +67,30 @@ th, td {
   background-color: #0F9D58; /* Green */
 }
 
-.save-button:hover {
-  background-color: #0a6d3d;
-}
+  .save-button:hover {
+    background-color: #0a6d3d;
+  }
 
 .adjust-button {
   background-color: #4285F4; /* Blue */
 }
 
-.adjust-button:hover {
-  background-color: #3367d6;
-}
+  .adjust-button:hover {
+    background-color: #3367d6;
+  }
 
 .primary-button {
   background-color: #4285F4; /* Blue */
 }
 
-.primary-button:hover {
-  background-color: #3367d6;
-}
+  .primary-button:hover {
+    background-color: #3367d6;
+  }
 
 .danger-button {
   background-color: #DB4437; /* Red */
 }
 
-.danger-button:hover {
-  background-color: #b0332a;
-}
+  .danger-button:hover {
+    background-color: #b0332a;
+  }

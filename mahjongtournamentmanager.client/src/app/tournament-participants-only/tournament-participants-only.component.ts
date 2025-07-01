@@ -29,6 +29,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   isCoordinatorVisible = false;
   selectedRoundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
   selectedMatchPlayers: { id: string, name: string }[] = [];
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +42,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.hasRole('Admin');
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {

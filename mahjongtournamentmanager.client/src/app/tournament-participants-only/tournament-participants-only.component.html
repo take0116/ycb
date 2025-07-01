@@ -13,7 +13,7 @@
     </ul>
   </div>
 
-  <div *ngIf="!isTableSaved" class="match-generation-section">
+  <div *ngIf="!isTableSaved && isAdmin" class="match-generation-section">
     <h4>対戦表を作成</h4>
     <form [formGroup]="matchSettingsForm" (ngSubmit)="generateMatchTable()">
       <div class="form-group">
@@ -39,8 +39,8 @@
             <td *ngFor="let cell of row.displayCells">{{ cell }}</td>
             <td>
               <div class="schedule-controls">
-                <input type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
-                <button *ngIf="authService.hasRole('Admin')" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
+                <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
+                <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
                 <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">調整</button>
               </div>
             </td>
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <div class="action-buttons">
+  <div *ngIf="isAdmin" class="action-buttons">
     <button *ngIf="groupedMatchTables.length > 0 && !isTableSaved" (click)="saveMatchTable()" class="mahjong-button primary-button">対戦表を保存</button>
     <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="mahjong-button danger-button">対戦表を削除</button>
   </div>
