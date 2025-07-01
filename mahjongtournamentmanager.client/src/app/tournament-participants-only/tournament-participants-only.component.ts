@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { ScheduleCoordinatorComponent } from '../schedule-coordinator/schedule-coordinator.component';
 import { environment } from '../../environments/environment';
+import { forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tournament-participants-only',
@@ -30,6 +32,8 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   selectedRoundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
   selectedMatchPlayers: { id: string, name: string }[] = [];
   isAdmin: boolean = false;
+
+  matchAvailabilities: { [matchId: number]: Set<string> } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -81,12 +85,58 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
 
   getSavedMatches(tournamentId: number): void {
     this.http.get<any[]>(`${this.apiUrl}/${tournamentId}/matches`).subscribe({
-      next: (matches) => this.reconstructMatchTables(matches),
+      next: (matches) => {
+        if (matches && matches.length > 0) {
+          this.fetchAndProcessAvailabilities(matches);
+        } else {
+          this.reconstructMatchTables([]);
+        }
+      },
       error: (error) => {
         console.error('Error fetching saved matches', error);
         this.message = '保存された対戦表の読み込みに失敗しました。';
       }
     });
+  }
+
+  fetchAndProcessAvailabilities(matches: any[]): void {
+    const availabilityRequests = matches
+      .filter(match => match.id > 0)
+      .map(match => 
+        this.http.get<any[]>(`${this.apiUrl}/${match.id}/availabilities`).pipe(
+          map(availabilities => ({ matchId: match.id, availabilities })),
+          catchError(err => {
+            console.error(`Failed to fetch availabilities for match ${match.id}`, err);
+            return of({ matchId: match.id, availabilities: [] });
+          })
+        )
+      );
+
+    if (availabilityRequests.length === 0) {
+      this.reconstructMatchTables(matches);
+      return;
+    }
+
+    forkJoin(availabilityRequests).subscribe({
+      next: (results) => {
+        const newAvailabilities: { [matchId: number]: Set<string> } = {};
+        results.forEach(result => {
+          const userIds = new Set<string>();
+          result.availabilities.forEach(avail => userIds.add(avail.userId));
+          newAvailabilities[result.matchId] = userIds;
+        });
+        this.matchAvailabilities = newAvailabilities;
+        this.reconstructMatchTables(matches);
+      },
+      error: (error) => {
+        console.error('Error fetching one or more match availabilities', error);
+        this.reconstructMatchTables(matches);
+      }
+    });
+  }
+
+  hasUserSubmittedAvailability(matchId: number, userId: string): boolean {
+    return this.matchAvailabilities[matchId]?.has(userId) ?? false;
   }
 
   reconstructMatchTables(matches: any[]): void {
@@ -173,8 +223,12 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     this.message = '';
   }
 
-  closeCoordinator(): void {
+  closeCoordinator(saved: boolean): void {
     this.isCoordinatorVisible = false;
+    if (saved && this.isTableSaved) {
+      // Re-fetch the data to update the highlights
+      this.getSavedMatches(this.tournamentId!);
+    }
   }
 
   getSchedulePeriod(startDate: string | null): string {
