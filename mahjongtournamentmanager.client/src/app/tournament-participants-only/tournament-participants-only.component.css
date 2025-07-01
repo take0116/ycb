@@ -166,6 +166,11 @@ tbody td {
   white-space: nowrap;
 }
 
+.player-name.submitted {
+  font-weight: bold;
+  color: #27ae60; /* A nice green color */
+}
+
 .schedule-controls {
   display: flex;
   flex-direction: column;

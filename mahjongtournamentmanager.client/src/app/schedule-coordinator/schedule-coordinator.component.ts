@@ -32,7 +32,7 @@ export class ScheduleCoordinatorComponent implements OnInit, OnChanges {
   private apiUrl = `${environment.apiUrl}/api/TournamentSettings`;
   @Input() roundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
   @Input() players: { id: string, name: string }[] = [];
-  @Output() close = new EventEmitter<void>();
+  @Output() close = new EventEmitter<boolean>();
 
   availabilities: Availability[] = [];
   timeSlots = ['20:00', '21:00', '22:00', '23:00'];
@@ -176,13 +176,12 @@ export class ScheduleCoordinatorComponent implements OnInit, OnChanges {
 
     this.http.post(`${this.apiUrl}/${this.roundInfo.matchId}/availabilities/batch`, payload)
       .subscribe(() => {
-        this.fetchAvailabilities();
-        this.closeDialog();
+        this.closeDialog(true); // Emit true on successful save
       });
   }
 
-  closeDialog(): void {
-    this.close.emit();
+  closeDialog(saved: boolean = false): void {
+    this.close.emit(saved);
   }
 
   toggleDetails(): void {

@@ -37,14 +37,27 @@
           </thead>
           <tbody>
             <tr *ngFor="let row of table.data.slice(1)">
-              <td *ngFor="let cell of row.displayCells; let i = index">
-                <ng-container *ngIf="i === 1; else defaultCell">
-                  <div class="player-list">
-                    <div *ngFor="let name of cell.split(', ')" class="player-name">{{ name }}</div>
+              <!-- This cell is for the round number -->
+              <td>{{ row.displayCells[0] }}</td>
+              
+              <!-- This cell is for the player list -->
+              <td>
+                <div class="player-list">
+                  <div *ngFor="let player of row.players" 
+                       class="player-name"
+                       [class.submitted]="hasUserSubmittedAvailability(row.matchId, player.id)">
+                    {{ player.name }}
                   </div>
-                </ng-container>
-                <ng-template #defaultCell>{{ cell }}</ng-template>
+                </div>
               </td>
+
+              <!-- This cell is for the bye players -->
+              <td>{{ row.displayCells[2] }}</td>
+
+              <!-- This cell is for the schedule period -->
+              <td>{{ row.displayCells[3] }}</td>
+
+              <!-- This cell is for the action buttons -->
               <td>
                 <div class="schedule-controls">
                   <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
@@ -69,5 +82,5 @@
   *ngIf="isCoordinatorVisible" 
   [roundInfo]="selectedRoundInfo" 
   [players]="selectedMatchPlayers"
-  (close)="closeCoordinator()">
+  (close)="closeCoordinator($event)">
 </app-schedule-coordinator>
