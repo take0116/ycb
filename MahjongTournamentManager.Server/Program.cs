@@ -11,10 +11,42 @@ using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// RenderのデータベースURLを.NETが理解できる形式に変換するヘルパー関数
+string ConvertDatabaseUrlToConnectionString(string databaseUrl)
+{
+    var uri = new Uri(databaseUrl);
+    var userInfo = uri.UserInfo.Split(':');
+
+    var builder = new Npgsql.NpgsqlConnectionStringBuilder
+    {
+        Host = uri.Host,
+        Port = uri.Port,
+        Username = userInfo[0],
+        Password = userInfo[1],
+        Database = uri.AbsolutePath.TrimStart('/'),
+        // クラウドDB接続に推奨されるSSL設定
+        SslMode = Npgsql.SslMode.Require,
+        TrustServerCertificate = true
+    };
+
+    return builder.ToString();
+}
+
+// 環境変数から接続文字列（データベースURL）を取得
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// もし接続文字列が取得でき、それがRenderのURL形式なら変換する
+if (!string.IsNullOrEmpty(connectionString))
+{
+    if (Uri.TryCreate(connectionString, UriKind.Absolute, out var uri) && uri.Scheme.StartsWith("postgres"))
+    {
+        connectionString = ConvertDatabaseUrlToConnectionString(connectionString);
+    }
+}
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
