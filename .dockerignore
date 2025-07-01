@@ -1,0 +1,12 @@
+# .NET Coreの不要なフォルダ
+**/bin/
+**/obj/
+
+# Angularクライアントの不要なフォルダ
+mahjongtournamentmanager.client/node_modules/
+
+# GitやIDEの設定ファイル
+.git/
+.vs/
+*.user
+*.suo
