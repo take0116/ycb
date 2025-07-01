@@ -248,3 +248,52 @@
   padding: 2rem;
   border-radius: 8px;
 }
+
+@media (max-width: 768px) {
+  .mahjong-background {
+    padding: 1rem 0;
+  }
+
+  .mahjong-tile {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tournament-title h2 {
+    font-size: 2rem;
+  }
+
+  .detail-section h3 {
+    font-size: 1.5rem;
+  }
+
+  .rules-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .action-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .admin-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .mahjong-button {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+  }
+
+  .participants-table {
+    th, td {
+      padding: 0.75rem;
+      font-size: 0.9rem;
+    }
+  }
+}

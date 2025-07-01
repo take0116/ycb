@@ -11,17 +11,9 @@ import { AuthService } from '../auth.service';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule]
 })
 export class AuthenticatedLayoutComponent {
-  isExpanded = false;
+  isMenuCollapsed = true;
 
   constructor(public authService: AuthService, private router: Router) { }
-
-  collapse() {
-    this.isExpanded = false;
-  }
-
-  toggle() {
-    this.isExpanded = !this.isExpanded;
-  }
 
   logout() {
     this.authService.logout();

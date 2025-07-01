@@ -29,10 +29,10 @@
   display: inline-block;
 }
 
-.back-button:hover {
-  background-color: #f0f0f0;
-  border-color: #aaa;
-}
+  .back-button:hover {
+    background-color: #f0f0f0;
+    border-color: #aaa;
+  }
 
 .page-header {
   font-size: 2.5rem;
@@ -98,85 +98,92 @@
   font-weight: 500;
   transition: all 0.2s ease;
 }
-.participant-tag:hover {
-  background-color: #bdc3c7;
-  color: #2c3e50;
-}
+
+  .participant-tag:hover {
+    background-color: #bdc3c7;
+    color: #2c3e50;
+  }
 
 /* Match Generation Section */
 .match-generation-section .form-group {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
+
 .match-generation-section label {
   font-weight: 500;
   color: #34495e;
 }
+
 .match-generation-section input {
   padding: 0.5rem 0.75rem;
   border: 1px solid #dfe4ea;
   border-radius: 6px;
   transition: border-color 0.2s;
 }
-.match-generation-section input:focus {
-  outline: none;
-  border-color: #3498db;
-}
+
+  .match-generation-section input:focus {
+    outline: none;
+    border-color: #3498db;
+  }
 
 /* Table Styles */
 .match-table-header {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
 }
 
 .table-responsive {
-    overflow-x: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
 }
 
+
 table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: center;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
 }
 
 th, td {
-    padding: 1rem 1.25rem;
-    vertical-align: middle;
+  padding: 1rem 1.25rem;
+  vertical-align: middle;
 }
 
 thead th {
-    background-color: #34495e;
-    color: white;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 3px solid #3498db;
+  background-color: #34495e;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 3px solid #3498db;
 }
 
 tbody tr {
-    border-bottom: 1px solid #ecf0f1;
-    transition: background-color 0.2s ease;
+  border-bottom: 1px solid #ecf0f1;
+  transition: background-color 0.2s ease;
 }
 
-tbody tr:nth-child(even) {
+  tbody tr:nth-child(even) {
     background-color: #f9fafb;
-}
+  }
 
-tbody tr:last-of-type {
+  tbody tr:last-of-type {
     border-bottom: none;
-}
+  }
 
-tbody tr:hover {
+  tbody tr:hover {
     background-color: #e9f5ff;
-}
+  }
 
 tbody td {
-    color: #555;
+  color: #555;
 }
 
 .player-list {
@@ -190,10 +197,10 @@ tbody td {
   white-space: nowrap;
 }
 
-.player-name.submitted {
-  font-weight: bold;
-  color: #27ae60; /* A nice green color */
-}
+  .player-name.submitted {
+    font-weight: bold;
+    color: #27ae60; /* A nice green color */
+  }
 
 .schedule-controls {
   display: flex;
@@ -203,16 +210,17 @@ tbody td {
   justify-content: center;
 }
 
-.schedule-controls input[type="date"] {
+  .schedule-controls input[type="date"] {
     border: 1px solid #ced4da;
     padding: 8px 12px;
     border-radius: 6px;
     font-family: inherit;
     width: 150px;
-}
+  }
 
 .schedule-period {
   font-size: 0.9rem;
+  font-weight: bold;
   color: #555;
   margin: 0.5rem 0;
 }
@@ -225,38 +233,89 @@ tbody td {
   justify-content: flex-end;
 }
 
-.action-buttons .mahjong-button {
-  padding: 0.8rem 1.8rem;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-}
-.action-buttons .mahjong-button:hover {
-  filter: brightness(1.1);
+  .action-buttons .mahjong-button {
+    padding: 0.8rem 1.8rem;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+    .action-buttons .mahjong-button:hover {
+      filter: brightness(1.1);
+    }
+
+.save-button {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
 }
 
-.save-button { background: linear-gradient(45deg, #2ecc71, #27ae60); }
-.adjust-button { background: linear-gradient(45deg, #3498db, #2980b9); }
-.primary-button { background: linear-gradient(45deg, #3498db, #2980b9); }
-.danger-button { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+.adjust-button {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+}
+
+.primary-button {
+  background: linear-gradient(45deg, #3498db, #2980b9);
+}
+
+.danger-button {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .participants-only-container {
+    padding: 0 1rem;
+  }
+
   .page-header {
     font-size: 2rem;
   }
+
   .card {
     padding: 1.5rem;
   }
+
   .action-buttons {
     flex-direction: column;
     align-items: stretch;
   }
+
   .mahjong-button {
     width: 100%;
+  }
+
+  th, td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .schedule-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+    .schedule-controls input[type="date"] {
+      width: 100%;
+    }
+
+  .bye-column, .schedule-column {
+    display: none;
+  }
+
+  .schedule-period-inline {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .schedule-period-inline {
+    display: none;
   }
 }
