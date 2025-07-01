@@ -51,6 +51,8 @@ else
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 }
 
+throw new Exception($"[DEBUG] The actual connection string value is: '{connectionString}'");
+
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
