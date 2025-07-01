@@ -34,15 +34,12 @@
 		<Exec Command="npm install" WorkingDirectory="..\mahjongtournamentmanager.client" />
 	</Target>
 
-	<Target Name="BuildAndCopyAngular" AfterTargets="DebugEnsureNodeEnv" BeforeTargets="Build">
+	<Target Name="BuildAndCopyAngular" AfterTargets="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' ">
 		<Message Text="--- Building Angular app and copying to wwwroot... ---" Importance="high" />
-
 		<Exec Command="npm run build -- --configuration production" WorkingDirectory="..\mahjongtournamentmanager.client" />
-
 		<ItemGroup>
 			<AngularDistFiles Include="..\mahjongtournamentmanager.client\dist\mahjongtournamentmanager.client\browser\**" />
 		</ItemGroup>
-
 		<Copy SourceFiles="@(AngularDistFiles)" DestinationFolder="wwwroot\%(RecursiveDir)" SkipUnchangedFiles="true" />
 	</Target>
 </Project>
