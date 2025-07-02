@@ -75,7 +75,7 @@ export class TournamentEditComponent implements OnInit {
   onSubmit(): void {
     if (this.tournamentForm.valid && this.tournamentId) {
       this.isSubmitting = true;
-      const tournamentData = this.tournamentForm.value;
+      const tournamentData = { id: +this.tournamentId, ...this.tournamentForm.value };
       this.http.put(`${this.apiUrl}/${this.tournamentId}`, tournamentData).subscribe({
         next: () => this.router.navigate(['/events', this.tournamentId]),
         error: (err) => {

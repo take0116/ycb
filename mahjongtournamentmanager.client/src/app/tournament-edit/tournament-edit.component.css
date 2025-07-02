@@ -1,104 +1,127 @@
-/* General form styling */
-.container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.tournament-creation-container {
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: var(--card-background);
+  border-radius: 10px;
+  box-shadow: 0 8px 16px var(--shadow-light);
 }
 
-h2 {
+.tournament-creation-container h2 {
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
+  color: var(--primary-color);
+  margin-bottom: 30px;
+  font-size: 2.2rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-  color: #555;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-color);
 }
 
-.form-control,
-.form-select {
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group input[type="time"],
+.form-group select,
+.form-group textarea {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   font-size: 1rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
 }
 
-.form-control:focus,
-.form-select:focus {
-  border-color: #80bdff;
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary-color);
+  outline: none;
 }
 
-.form-check {
-  margin-bottom: 1rem;
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.form-check-input {
-  margin-right: 0.5rem;
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px;
+  width: auto;
+  transform: scale(1.2); /* Checkboxを少し大きくする */
 }
 
-.btn-primary {
+button[type="submit"] {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #007bff;
-  border: none;
-  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--primary-color);
   color: white;
-  font-size: 1.1rem;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
+button[type="submit"]:hover {
+  background-color: #E680B3;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-.btn-primary:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.message {
+  margin-top: 25px;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.05rem;
 }
 
-.alert-danger {
-  margin-top: 1rem;
-  color: #721c24;
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  padding: 0.75rem 1.25rem;
-  border-radius: 4px;
+.message.success {
+  background-color: #E6FFE6;
+  color: #336633;
+  border: 1px solid #CCFFCC;
+}
+
+.message.error {
+  background-color: #FFCCCC;
+  color: #FF6666;
+  border: 1px solid #FFB3B3;
+}
+
+/* 新しいスタイル */
+.form-group select#gameTypeSelection {
+  margin-bottom: 20px;
 }
 
 .form-row {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 
 .form-row .form-group {
-    flex: 1;
+  flex: 1;
 }
 
 @media (max-width: 768px) {
-    .container {
-        margin: 0;
-        padding: 20px;
-        box-shadow: none;
-        border-radius: 0;
-    }
+  .tournament-creation-container {
+    margin: 0;
+    padding: 20px;
+    box-shadow: none;
+    border-radius: 0;
+  }
 
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
 }
