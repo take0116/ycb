@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-splatoon-tournament-detail',
@@ -12,6 +13,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./splatoon-tournament-detail.component.css']
 })
 export class SplatoonTournamentDetailComponent implements OnInit {
+  private apiUrl = `${environment.apiUrl}/api/TournamentSettings`;
   tournament: any;
   isParticipating: boolean = false;
   participants: any[] = [];
@@ -34,7 +36,7 @@ export class SplatoonTournamentDetailComponent implements OnInit {
   }
 
   getTournamentDetail(id: number): void {
-    this.http.get<any>(`/api/SplatoonTournaments/${id}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/api/SplatoonTournaments/${id}`).subscribe({
       next: (data) => {
         this.tournament = data;
         this.checkParticipation(id);

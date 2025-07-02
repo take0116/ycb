@@ -50,10 +50,10 @@ namespace MahjongTournamentManager.Server.Controllers
                     Id = t.Id,
                     GameTitle = "スプラトゥーン",
                     TournamentName = t.TournamentName,
-                    StartDate = t.EventDate,
+                    StartDate = DateOnly.FromDateTime(t.EventDate.ToDateTime(t.StartTime)),
                     Status = t.Status,
                     Description = t.Comment,
-                    DetailUrl = $"/splatoon-event/{t.Id}" // Placeholder URL
+                    DetailUrl = $"/splatoon-event/{t.Id}"
                 })
                 .ToListAsync();
 

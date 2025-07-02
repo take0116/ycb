@@ -1,0 +1,77 @@
+<div class="container">
+  <div *ngIf="tournament" class="tournament-detail-content">
+    <header class="page-header">
+      <a routerLink="/events" class="back-link">＜ イベント一覧に戻る</a>
+      <h1>{{ tournament.tournamentName }}</h1>
+      <p class="status-badge status-{{tournament.status}}">
+        {{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}
+      </p>
+    </header>
+
+    <div class="main-content">
+      <div class="details-grid">
+        <div class="card">
+          <h3>開催情報</h3>
+          <p><strong>開催日:</strong> {{ tournament.eventDate | date:'yyyy/MM/dd(E)' }}</p>
+          <p><strong>時間:</strong> {{ tournament.startTime.slice(0, 5) }} - {{ tournament.endTime.slice(0, 5) }}</p>
+        </div>
+
+        <div class="card">
+          <h3>ルール</h3>
+          <p><strong>ゲームモード:</strong> {{ tournament.gameMode }}</p>
+        </div>
+
+        <div class="card full-width" *ngIf="tournament.comment">
+          <h3>コメント</h3>
+          <p class="comment-box">{{ tournament.comment }}</p>
+        </div>
+      </div>
+
+      <div class="action-section">
+        <button *ngIf="!isParticipant && authService.currentUserValue" (click)="joinTournament()" class="btn btn-primary">
+          このイベントに参加する
+        </button>
+        <div class="admin-actions" *ngIf="authService.hasRole('Admin')">
+          <button (click)="editTournament()" class="btn btn-secondary">編集</button>
+          <button (click)="deleteTournament()" class="btn btn-danger">削除</button>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="participants.length > 0">
+        <h3>参加者一覧</h3>
+        <div class="table-responsive">
+          <table class="participants-table">
+            <thead>
+              <tr>
+                <th>参加者名</th>
+                <th>登録日時</th>
+                <th class="actions-column" *ngIf="authService.hasRole('Admin')">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let participant of participants">
+                <td>{{ participant.user.userName }}</td>
+                <td>{{ participant.joinedDate | date:'yyyy/MM/dd HH:mm:ss' }}</td>
+                <td class="actions-column" *ngIf="authService.hasRole('Admin')">
+                  <button (click)="removeParticipant(participant.userId)" class="btn btn-danger btn-sm">参加取消</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" *ngIf="participants.length === 0">
+          <h3>参加者一覧</h3>
+          <p>まだ参加者はいません。</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="!tournament && message" class="error-message-box">
+    <p>{{ message }}</p>
+  </div>
+</div>
