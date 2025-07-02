@@ -118,7 +118,7 @@
               <tr *ngFor="let row of table.data.slice(1)" class="result-match-row">
                 <td data-label="№">{{ row.round }}</td>
                 <td *ngFor="let player of row.players" [attr.data-label]="player.name">
-                  <input type="number" step="any" class="score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
+                  <input type="number" class="score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
                 </td>
                 <td class="action-cell">
                   <button (click)="saveResult(row.matchId)" class="mahjong-button save-button">保存</button>
