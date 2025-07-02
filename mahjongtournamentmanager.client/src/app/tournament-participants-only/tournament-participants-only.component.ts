@@ -206,29 +206,31 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   }
 
   saveSchedulingStartDate(row: any, tableName: string): void {
-    const dateInput = document.getElementById(`schedule-date-${tableName}-${row.round}`) as HTMLInputElement;
-    const newDate = dateInput.value ? `"${dateInput.value}"` : null;
+    if (confirm('日程調整開始日を変更します。よろしいですか？（既存の出欠登録はリセットされます）')) {
+      const dateInput = document.getElementById(`schedule-date-${tableName}-${row.round}`) as HTMLInputElement;
+      const newDate = dateInput.value ? `"${dateInput.value}"` : null;
 
-    this.http.put(`${this.apiUrl}/matches/${row.matchId}/schedule-start`, newDate, {
-      headers: { 'Content-Type': 'application/json' }
-    }).subscribe({
-      next: () => {
-        this.message = `第${row.round}回戦の日程調整開始日を保存しました。`;
-        row.schedulingStartDate = dateInput.value || null;
-        // Manually update the display cell for the schedule period
-        const tableData = this.groupedMatchTables.find(t => t.tableName === tableName)?.data;
-        if (tableData) {
-          const rowIndex = tableData.findIndex(r => !Array.isArray(r) && r.matchId === row.matchId);
-          if (rowIndex > -1) {
-            tableData[rowIndex].displayCells[3] = this.getSchedulePeriod(row.schedulingStartDate);
+      this.http.put(`${this.apiUrl}/matches/${row.matchId}/schedule-start`, newDate, {
+        headers: { 'Content-Type': 'application/json' }
+      }).subscribe({
+        next: () => {
+          this.message = `第${row.round}回戦の日程調整開始日を保存しました。`;
+          row.schedulingStartDate = dateInput.value || null;
+          // Manually update the display cell for the schedule period
+          const tableData = this.groupedMatchTables.find(t => t.tableName === tableName)?.data;
+          if (tableData) {
+            const rowIndex = tableData.findIndex(r => !Array.isArray(r) && r.matchId === row.matchId);
+            if (rowIndex > -1) {
+              tableData[rowIndex].displayCells[3] = this.getSchedulePeriod(row.schedulingStartDate);
+            }
           }
+        },
+        error: (err) => {
+          console.error(err);
+          this.message = '日付の保存に失敗しました。';
         }
-      },
-      error: (err) => {
-        console.error(err);
-        this.message = '日付の保存に失敗しました。';
-      }
-    });
+      });
+    }
   }
 
   openCoordinator(row: any): void {
@@ -273,19 +275,21 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   }
 
   unlockMatchTable(): void {
-    if (!this.tournamentId) return;
-    this.http.post(`${this.apiUrl}/${this.tournamentId}/unlock-match-table`, {}).subscribe({
-      next: () => {
-        this.message = '対戦表が削除され、大会は再び募集中になりました。';
-        this.isTableSaved = false;
-        this.groupedMatchTables = [];
-        if (this.tournamentId) this.getTournamentData(this.tournamentId);
-      },
-      error: (error) => {
-        console.error('Error unlocking match table', error);
-        this.message = error.error?.message || '対戦表の削除に失敗しました。';
-      }
-    });
+    if (confirm('対戦表を削除し、大会を再び募集中にします。よろしいですか？')) {
+      if (!this.tournamentId) return;
+      this.http.post(`${this.apiUrl}/${this.tournamentId}/unlock-match-table`, {}).subscribe({
+        next: () => {
+          this.message = '対戦表が削除され、大会は再び募集中になりました。';
+          this.isTableSaved = false;
+          this.groupedMatchTables = [];
+          if (this.tournamentId) this.getTournamentData(this.tournamentId);
+        },
+        error: (error) => {
+          console.error('Error unlocking match table', error);
+          this.message = error.error?.message || '対戦表の削除に失敗しました。';
+        }
+      });
+    }
   }
 
   saveMatchTable(): void {
