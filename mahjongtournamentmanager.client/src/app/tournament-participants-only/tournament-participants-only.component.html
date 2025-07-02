@@ -56,11 +56,11 @@
               <tr *ngFor="let row of table.data.slice(1)">
                 <!-- Round Number -->
                 <td>{{ row.displayCells[0] }}</td>
-                
+
                 <!-- Player List -->
                 <td>
                   <div class="player-list">
-                    <div *ngFor="let player of row.players" 
+                    <div *ngFor="let player of row.players"
                          class="player-name"
                          [class.submitted]="hasUserSubmittedAvailability(row.matchId, player.id)">
                       {{ player.name }}
@@ -94,7 +94,6 @@
 
   <div *ngIf="isAdmin" class="action-buttons">
     <button *ngIf="groupedMatchTables.length > 0 && !isTableSaved" (click)="saveMatchTable()" class="mahjong-button primary-button">対戦表を保存</button>
-    <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="mahjong-button danger-button">対戦表を削除</button>
   </div>
 
   <div *ngIf="isTableSaved" class="card result-registration-section">
@@ -130,6 +129,11 @@
       </div>
     </div>
   </div>
+
+  <div *ngIf="isAdmin" class="action-buttons">
+    <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="mahjong-button danger-button">対戦表を削除</button>
+  </div>
+
 </div>
 
 <app-schedule-coordinator 
