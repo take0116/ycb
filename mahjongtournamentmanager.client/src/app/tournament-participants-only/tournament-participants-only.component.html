@@ -28,62 +28,66 @@
     </form>
   </div>
 
-  <div *ngIf="groupedMatchTables.length > 0" class="match-tables-section">
-    <div *ngFor="let table of groupedMatchTables" class="card match-table">
-      <h3 class="match-table-header">{{ table.tableName }}</h3>
-      <div class="table-responsive">
+  <div *ngIf="groupedMatchTables.length > 0" class="card match-tables-section">
+    <div class="card-header" (click)="toggleMatchTablesVisibility()">
+      <span>対戦表</span>
+      <span class="toggle-icon" [style.transform]="isMatchTablesVisible ? 'rotate(180deg)' : ''">▼</span>
+    </div>
+    <div *ngIf="isMatchTablesVisible">
+      <div *ngFor="let table of groupedMatchTables" class="match-table">
+        <h3 class="match-table-header">{{ table.tableName }}</h3>
         <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <!-- The first column header (e.g., 'Round') -->
-              <th>{{ table.data[0][0] }}</th>
-              <!-- The second column header (e.g., 'Players') -->
-              <th>{{ table.data[0][1] }}</th>
-              <!-- The third column header (e.g., 'Bye'), with a class to hide it on mobile -->
-              <th class="bye-column">{{ table.data[0][2] }}</th>
-              <!-- The fourth column header (e.g., 'Schedule'), with a class to hide it on mobile -->
-              <th class="schedule-column">{{ table.data[0][3] }}</th>
-              <!-- The fifth column for actions -->
-              <th>日程</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let row of table.data.slice(1)">
-              <!-- Round Number -->
-              <td>{{ row.displayCells[0] }}</td>
-              
-              <!-- Player List -->
-              <td>
-                <div class="player-list">
-                  <div *ngFor="let player of row.players" 
-                       class="player-name"
-                       [class.submitted]="hasUserSubmittedAvailability(row.matchId, player.id)">
-                    {{ player.name }}
+          <table>
+            <thead>
+              <tr>
+                <!-- The first column header (e.g., 'Round') -->
+                <th>{{ table.data[0][0] }}</th>
+                <!-- The second column header (e.g., 'Players') -->
+                <th>{{ table.data[0][1] }}</th>
+                <!-- The third column header (e.g., 'Bye'), with a class to hide it on mobile -->
+                <th class="bye-column">{{ table.data[0][2] }}</th>
+                <!-- The fourth column header (e.g., 'Schedule'), with a class to hide it on mobile -->
+                <th class="schedule-column">{{ table.data[0][3] }}</th>
+                <!-- The fifth column for actions -->
+                <th>日程</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of table.data.slice(1)">
+                <!-- Round Number -->
+                <td>{{ row.displayCells[0] }}</td>
+                
+                <!-- Player List -->
+                <td>
+                  <div class="player-list">
+                    <div *ngFor="let player of row.players" 
+                         class="player-name"
+                         [class.submitted]="hasUserSubmittedAvailability(row.matchId, player.id)">
+                      {{ player.name }}
+                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <!-- Bye Players (will be hidden on mobile) -->
-              <td class="bye-column">{{ row.displayCells[2] }}</td>
+                <!-- Bye Players (will be hidden on mobile) -->
+                <td class="bye-column">{{ row.displayCells[2] }}</td>
 
-              <!-- Schedule Period (will be hidden on mobile) -->
-              <td class="schedule-column">{{ row.displayCells[3] }}</td>
+                <!-- Schedule Period (will be hidden on mobile) -->
+                <td class="schedule-column">{{ row.displayCells[3] }}</td>
 
-              <!-- Actions -->
-              <td>
-                <div class="schedule-controls">
-                  <!-- Schedule period, shown only on mobile -->
-                  <div class="schedule-period-inline">{{ row.displayCells[3] }}</div>
-                  <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
-                  <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
-                  <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">希望日入力</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <!-- Actions -->
+                <td>
+                  <div class="schedule-controls">
+                    <!-- Schedule period, shown only on mobile -->
+                    <div class="schedule-period-inline">{{ row.displayCells[3] }}</div>
+                    <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
+                    <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
+                    <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">希望日入力</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -91,6 +95,40 @@
   <div *ngIf="isAdmin" class="action-buttons">
     <button *ngIf="groupedMatchTables.length > 0 && !isTableSaved" (click)="saveMatchTable()" class="mahjong-button primary-button">対戦表を保存</button>
     <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="mahjong-button danger-button">対戦表を削除</button>
+  </div>
+
+  <div *ngIf="isTableSaved" class="card result-registration-section">
+    <div class="card-header" (click)="isResultFormVisible = !isResultFormVisible">
+      <span>対戦結果登録</span>
+      <span class="toggle-icon" [style.transform]="isResultFormVisible ? 'rotate(180deg)' : ''">▼</span>
+    </div>
+    <div *ngIf="isResultFormVisible">
+      <div *ngFor="let table of groupedMatchTables" class="match-table">
+        <h4 class="match-table-header">{{ table.tableName }}</h4>
+        <div class="table-responsive">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th>№</th>
+                <th *ngFor="let player of table.data[1]?.players">{{ player.name }}</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of table.data.slice(1)" class="result-match-row">
+                <td data-label="№">{{ row.round }}</td>
+                <td *ngFor="let player of row.players" [attr.data-label]="player.name">
+                  <input type="number" step="any" class="score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
+                </td>
+                <td class="action-cell">
+                  <button (click)="saveResult(row.matchId)" class="mahjong-button save-button">保存</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

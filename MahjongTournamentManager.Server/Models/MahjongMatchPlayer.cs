@@ -16,6 +16,8 @@ namespace MahjongTournamentManager.Server.Models
         public IdentityUser User { get; set; }
 
         [Required]
-        public int TableNumber { get; set; } // e.g., 1 for Table A, 2 for Table B
+        public int TableNumber { get; set; }
+
+        public decimal? Score { get; set; }
     }
 }

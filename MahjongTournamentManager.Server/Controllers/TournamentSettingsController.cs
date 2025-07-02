@@ -84,7 +84,7 @@ namespace MahjongTournamentManager.Server.Controllers
         // GET: api/TournamentSettings/{id}/matches
         [HttpGet("{id}/matches")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<MahjongMatchDto>>> GetMatches(int id)
+        public async Task<ActionResult<IEnumerable<MatchDto>>> GetMatches(int id)
         {
             var matches = await _context.MahjongMatches
                 .Where(m => m.TournamentSettingsId == id)
@@ -98,16 +98,17 @@ namespace MahjongTournamentManager.Server.Controllers
                 return NotFound("No matches found for this tournament.");
             }
 
-            var matchDtos = matches.Select(m => new MahjongMatchDto
+            var matchDtos = matches.Select(m => new MatchDto
             {
                 Id = m.Id,
                 Round = m.Round,
                 ByePlayerUserNames = m.ByePlayerUserNames,
                 SchedulingStartDate = m.SchedulingStartDate,
-                MahjongMatchPlayers = m.MahjongMatchPlayers.Select(mp => new MahjongMatchPlayerDto
+                MahjongMatchPlayers = m.MahjongMatchPlayers.Select(mp => new MatchPlayerDto
                 {
                     TableNumber = mp.TableNumber,
-                    User = new UserDto { Id = mp.User.Id, UserName = mp.User.UserName }
+                    User = new UserDto { Id = mp.User.Id, UserName = mp.User.UserName },
+                    Score = mp.Score
                 }).ToList()
             }).ToList();
 
@@ -483,6 +484,43 @@ namespace MahjongTournamentManager.Server.Controllers
         private bool TournamentSettingsExists(int id)
         {
             return _context.TournamentSettings.Any(e => e.Id == id);
+        }
+
+        [HttpPost("matches/save-result")]
+        [Authorize]
+        public async Task<IActionResult> SaveResult([FromBody] SaveResultDto request)
+        {
+            var match = await _context.MahjongMatches
+                                    .Include(m => m.MahjongMatchPlayers)
+                                    .FirstOrDefaultAsync(m => m.Id == request.MatchId);
+
+            if (match == null)
+            {
+                return NotFound("Match not found.");
+            }
+
+            // Optional: Check if the current user is part of the match or is an admin
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+            var isPlayerInMatch = match.MahjongMatchPlayers.Any(p => p.UserId == currentUserId);
+
+            if (!isAdmin && !isPlayerInMatch)
+            {
+                return Forbid();
+            }
+
+            foreach (var playerScore in request.PlayerScores)
+            {
+                var playerInMatch = match.MahjongMatchPlayers
+                                        .FirstOrDefault(p => p.UserId == playerScore.UserId);
+                if (playerInMatch != null)
+                {
+                    playerInMatch.Score = playerScore.Score;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Result saved successfully." });
         }
     }
 

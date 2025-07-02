@@ -68,12 +68,15 @@
 }
 
 /* Participants Section */
-.participants-section .card-header {
+.participants-section .card-header,
+.match-tables-section .card-header,
+.result-registration-section .card-header {
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 
 .toggle-icon {
   transition: transform 0.3s ease-in-out;
@@ -135,7 +138,7 @@
   font-size: 1.8rem;
   font-weight: 600;
   color: #2c3e50;
-  margin-bottom: 1.5rem;
+  margin-block: 1.0rem;
 }
 
 .table-responsive {
@@ -317,5 +320,83 @@ tbody td {
 @media (min-width: 769px) {
   .schedule-period-inline {
     display: none;
+  }
+}
+
+/* Result Registration Section */
+.result-registration-section {
+  margin-top: 2.5rem;
+}
+
+.result-table th, .result-table td {
+  text-align: center;
+}
+
+.score-input {
+  width: 80px;
+  padding: 0.5rem;
+  text-align: right;
+  border: 1px solid #dfe4ea;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.score-input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.result-table .save-button {
+  font-size: 0.9rem;
+  padding: 0.4rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .result-table thead {
+    display: none; /* Hide table header on mobile */
+  }
+
+  .result-table, .result-table tbody, .result-table tr, .result-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .result-table tr {
+    margin-bottom: 1.5rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .result-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 0.75rem 0;
+    border: none;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .result-table td:last-child {
+    border-bottom: none;
+  }
+
+  .result-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    text-align: left;
+    margin-right: 1rem;
+  }
+
+  .result-table .action-cell {
+    justify-content: center;
+    padding-top: 1rem;
+  }
+  .result-table .action-cell::before {
+    display: none;
+  }
+
+  .score-input {
+    width: 120px;
   }
 }

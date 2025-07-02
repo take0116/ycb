@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { ScheduleCoordinatorComponent } from '../schedule-coordinator/schedule-coordinator.component';
@@ -12,7 +12,7 @@ import { map, catchError } from 'rxjs/operators';
 @Component({
   selector: 'app-tournament-participants-only',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ScheduleCoordinatorComponent, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ScheduleCoordinatorComponent, RouterModule],
   templateUrl: './tournament-participants-only.component.html',
   styleUrls: ['./tournament-participants-only.component.css']
 })
@@ -27,6 +27,8 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   matchSettingsForm: FormGroup;
   isTableSaved: boolean = false;
   isParticipantsVisible: boolean = false;
+  isMatchTablesVisible: boolean = false;
+  isResultFormVisible: boolean = false;
   
   isCoordinatorVisible = false;
   selectedRoundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
@@ -34,6 +36,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   isAdmin: boolean = false;
 
   matchAvailabilities: { [matchId: number]: Set<string> } = {};
+  matchScores: { [matchId: string]: { [userId: string]: number | null } } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -143,6 +146,12 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     if (matches.length === 0) return;
     const tables: { [key: string]: { tableName: string, data: any[] } } = {};
     matches.forEach(match => {
+      // Initialize scores for each match
+      this.matchScores[match.id] = {};
+      match.mahjongMatchPlayers.forEach((p: any) => {
+        this.matchScores[match.id][p.user.id] = p.score;
+      });
+
       const tableNumber = match.mahjongMatchPlayers[0]?.tableNumber;
       if (!tableNumber) return;
       const tableName = String.fromCharCode(64 + tableNumber) + '卓';
@@ -184,6 +193,10 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
 
   toggleParticipantsVisibility(): void {
     this.isParticipantsVisible = !this.isParticipantsVisible;
+  }
+
+  toggleMatchTablesVisibility(): void {
+    this.isMatchTablesVisible = !this.isMatchTablesVisible;
   }
 
   saveSchedulingStartDate(row: any, tableName: string): void {
@@ -393,5 +406,33 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     
     const finalMatchCount = totalRounds - (totalRounds * numByesPerRound / numActualParticipants);
     this.message = `全参加者の抜け番回数を完全に均等にするため、${totalRounds}回戦（1人あたり${finalMatchCount}試合）の対戦表を生成しました。`;
+  }
+
+  saveResult(matchId: number): void {
+    const scores = this.matchScores[matchId];
+    if (!scores) {
+      this.message = 'スコアが見つかりません。';
+      return;
+    }
+
+    const playerScores = Object.keys(scores).map(userId => ({
+      userId: userId,
+      score: scores[userId] || 0
+    }));
+
+    const payload = {
+      matchId: matchId,
+      playerScores: playerScores
+    };
+
+    this.http.post(`${this.apiUrl}/matches/save-result`, payload).subscribe({
+      next: () => {
+        this.message = `対戦ID ${matchId} の結果を保存しました。`;
+      },
+      error: (err) => {
+        console.error(err);
+        this.message = '結果の保存に失敗しました。';
+      }
+    });
   }
 }
