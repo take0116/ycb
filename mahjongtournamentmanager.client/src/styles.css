@@ -133,6 +133,11 @@ button {
     background-color: #646464;
 }
 
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
 /* Cards */
 .card {
   background-color: var(--base-color);
