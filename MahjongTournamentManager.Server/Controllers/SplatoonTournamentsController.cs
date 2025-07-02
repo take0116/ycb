@@ -159,5 +159,46 @@ namespace MahjongTournamentManager.Server.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> PutSplatoonTournament(int id, SplatoonTournament splatoonTournament)
+        {
+            if (id != splatoonTournament.Id)
+            {
+                return BadRequest();
+            }
+
+            var existingTournament = await _context.SplatoonTournaments.FindAsync(id);
+            if (existingTournament == null)
+            {
+                return NotFound();
+            }
+
+            existingTournament.TournamentName = splatoonTournament.TournamentName;
+            existingTournament.EventDate = splatoonTournament.EventDate;
+            existingTournament.StartTime = splatoonTournament.StartTime;
+            existingTournament.EndTime = splatoonTournament.EndTime;
+            existingTournament.GameMode = splatoonTournament.GameMode;
+            existingTournament.Comment = splatoonTournament.Comment;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.SplatoonTournaments.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
     }
 }

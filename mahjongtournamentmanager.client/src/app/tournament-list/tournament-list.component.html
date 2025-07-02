@@ -15,7 +15,7 @@
   </div>
 
   <div *ngIf="!isLoading && tournaments.length > 0" class="tournament-grid">
-    <div class="card tournament-card" *ngFor="let tournament of tournaments" [routerLink]="tournament.detailUrl" data-scroll>
+    <div class="card tournament-card" *ngFor="let tournament of tournaments" [routerLink]="tournament.gameTitle === '雀魂' ? ['/events', tournament.id] : ['/splatoon-event', tournament.id]" data-scroll>
       <div class="card-header">
         <span class="game-title">{{ tournament.gameTitle }}</span>
         <span class="status-badge status-{{tournament.status}}">
@@ -25,7 +25,9 @@
       <h3 class="card-title">{{ tournament.tournamentName }}</h3>
       <p class="card-description">{{ tournament.description }}</p>
       <div class="card-footer">
-        <span class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }} から</span>
+        <span *ngIf="tournament.gameTitle === '雀魂'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}～</span>
+        <span *ngIf="tournament.gameTitle === 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
+        <span *ngIf="tournament.gameTitle !== '雀魂' && tournament.gameTitle !== 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
       </div>
     </div>
   </div>

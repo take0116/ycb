@@ -6,12 +6,18 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { TournamentService } from './app/tournament.service';
 import { authInterceptor } from './app/auth.interceptor';
 import { AuthService } from './app/auth.service';
+import { registerLocaleData } from '@angular/common';
+import localeJa from '@angular/common/locales/ja';
+import { LOCALE_ID } from '@angular/core';
+
+registerLocaleData(localeJa);
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
     TournamentService,
-    AuthService
+    AuthService,
+    { provide: LOCALE_ID, useValue: 'ja-JP' }
   ]
 }).catch(err => console.error(err));

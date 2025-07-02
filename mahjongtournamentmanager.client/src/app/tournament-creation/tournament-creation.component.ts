@@ -14,8 +14,10 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class TournamentCreationComponent implements OnInit {
-  private apiUrl = `${environment.apiUrl}/api/TournamentSettings`;
+  private mahjongApiUrl = `${environment.apiUrl}/api/TournamentSettings`;
+  private splatoonApiUrl = `${environment.apiUrl}/api/SplatoonTournaments`;
   tournamentForm: FormGroup;
+  splatoonTournamentForm: FormGroup;
   isSubmitting = false;
   selectedGameType: string = '雀魂';
   startingScoreOptions: number[] = [25000, 30000, 35000];
@@ -35,6 +37,15 @@ export class TournamentCreationComponent implements OnInit {
       status: [1, Validators.required],
       description: ['']
     });
+
+    this.splatoonTournamentForm = this.fb.group({
+      tournamentName: ['', Validators.required],
+      eventDate: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      gameMode: ['プライベートマッチ', Validators.required],
+      comment: ['']
+    });
   }
 
   ngOnInit(): void {
@@ -48,20 +59,36 @@ export class TournamentCreationComponent implements OnInit {
   }
 
   createTournament(): void {
-    if (this.tournamentForm.invalid) {
-      this.message = '入力内容に誤りがあります。';
-      return;
-    }
-
-    this.isSubmitting = true;
-    const tournamentData = this.tournamentForm.value;
-    this.http.post(this.apiUrl, tournamentData).subscribe({
-      next: () => this.router.navigate(['/events']),
-      error: (err) => {
-        console.error(err);
-        this.isSubmitting = false;
-        this.message = '作成に失敗しました。';
+    if (this.selectedGameType === '雀魂') {
+      if (this.tournamentForm.invalid) {
+        this.message = '入力内容に誤りがあります。';
+        return;
       }
-    });
+      this.isSubmitting = true;
+      const tournamentData = this.tournamentForm.value;
+      this.http.post(this.mahjongApiUrl, tournamentData).subscribe({
+        next: () => this.router.navigate(['/events']),
+        error: (err) => {
+          console.error(err);
+          this.isSubmitting = false;
+          this.message = '作成に失敗しました。';
+        }
+      });
+    } else if (this.selectedGameType === 'スプラトゥーン') {
+      if (this.splatoonTournamentForm.invalid) {
+        this.message = '入力内容に誤りがあります。';
+        return;
+      }
+      this.isSubmitting = true;
+      const tournamentData = this.splatoonTournamentForm.value;
+      this.http.post(this.splatoonApiUrl, tournamentData).subscribe({
+        next: () => this.router.navigate(['/events']),
+        error: (err) => {
+          console.error(err);
+          this.isSubmitting = false;
+          this.message = '作成に失敗しました。';
+        }
+      });
+    }
   }
 }

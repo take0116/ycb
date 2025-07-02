@@ -6,6 +6,7 @@
       <label for="gameTypeSelection" class="form-label">企画の種類:</label>
       <select id="gameTypeSelection" class="form-control" [(ngModel)]="selectedGameType" name="gameTypeSelection">
         <option value="雀魂">雀魂</option>
+        <option value="スプラトゥーン">スプラトゥーン</option>
       </select>
     </div>
 
@@ -73,6 +74,43 @@
           <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
         </div>
         <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">大会を作成</button>
+      </form>
+    </div>
+
+    <!-- Splatoon Form -->
+    <div *ngIf="selectedGameType === 'スプラトゥーン'">
+      <form [formGroup]="splatoonTournamentForm" (ngSubmit)="createTournament()">
+        <div class="form-group">
+          <label for="splatoonTournamentName" class="form-label">企画名:</label>
+          <input type="text" id="splatoonTournamentName" class="form-control" formControlName="tournamentName" required>
+        </div>
+        <div class="form-group">
+          <label for="splatoonEventDate" class="form-label">開催日:</label>
+          <input type="date" id="splatoonEventDate" class="form-control" formControlName="eventDate" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="splatoonStartTime" class="form-label">開始時刻:</label>
+            <input type="time" id="splatoonStartTime" class="form-control" formControlName="startTime" required>
+          </div>
+          <div class="form-group">
+            <label for="splatoonEndTime" class="form-label">終了時刻:</label>
+            <input type="time" id="splatoonEndTime" class="form-control" formControlName="endTime" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="splatoonGameMode" class="form-label">ゲームモード:</label>
+          <select id="splatoonGameMode" class="form-control" formControlName="gameMode" required>
+            <option>プライベートマッチ</option>
+            <option>オープンマッチ</option>
+            <option>ナワバリバトル</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="splatoonComment" class="form-label">コメント (任意):</label>
+          <textarea id="splatoonComment" class="form-control" formControlName="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="splatoonTournamentForm.invalid">登録</button>
       </form>
     </div>
 
