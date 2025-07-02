@@ -325,6 +325,125 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       this.message = '最低試合数を正しく入力してください。';
       return;
     }
+
+    const isTeamMode = this.teams.length > 0 && this.unassignedParticipants.length === 0;
+
+    if (isTeamMode) {
+      this.generateTeamBasedMatchTable();
+    } else {
+      this.generateRandomMatchTable();
+      if (this.teams.length > 0 && this.unassignedParticipants.length > 0) {
+        this.message = '未割り当ての参加者がいるため、チームを考慮せずランダムに対戦表を生成しました。\n' + this.message;
+      }
+    }
+  }
+
+  private generateTeamBasedMatchTable(): void {
+    const minMatchesPerParticipant = this.matchSettingsForm.get('minMatchesPerParticipant')?.value;
+    const numPlayersPerMatch = this.playerCount;
+    const numTeams = this.teams.length;
+
+    if (this.teams.some(t => t.participants.length === 0)) {
+      this.message = '参加者が0人のチームがあるため、チームベースの対戦表を生成できません。';
+      return;
+    }
+    
+    const allParticipantsFromTeams = this.teams.flatMap(t => t.participants.map(p => ({ ...p, teamName: t.name })));
+    const numActualParticipants = allParticipantsFromTeams.length;
+
+    if (numActualParticipants < numPlayersPerMatch) {
+      this.message = '参加者数が卓の人数に満たないため、対戦表を生成できません。';
+      return;
+    }
+
+    const numSimultaneousTables = Math.floor(numActualParticipants / numPlayersPerMatch);
+    const numPlayersInMatches = numSimultaneousTables * numPlayersPerMatch;
+
+    this.groupedMatchTables = Array.from({ length: numSimultaneousTables }, (_, t) => {
+      const tableName = String.fromCharCode(65 + t) + '卓';
+      const headerRow = ['№', '対戦ユーザー', '抜け番', '開催期間'];
+      return { tableName, data: [headerRow] };
+    });
+
+    // --- New Logic: Loop until min matches is met for all ---
+
+    const teamPlayerQueues = new Map<string, any[]>();
+    this.teams.forEach(team => {
+      teamPlayerQueues.set(team.name, this.shuffleArray([...team.participants]));
+    });
+
+    const matchCountPerPlayer = new Map<string, number>();
+    allParticipantsFromTeams.forEach(p => matchCountPerPlayer.set(p.userId, 0));
+
+    let totalRounds = 0;
+    
+    // Loop until everyone has played enough matches
+    while (Array.from(matchCountPerPlayer.values()).some(count => count < minMatchesPerParticipant)) {
+        totalRounds++;
+        if (totalRounds > 100) { // Safety break for infinite loops
+          this.message = '試合数が多すぎます。設定を確認してください。';
+          return;
+        }
+        
+        // Select players for this round by "dealing" from each team's queue
+        const playersForThisRound: any[] = [];
+        let teamSelectionOrder = this.shuffleArray(this.teams.map(t => t.name));
+        
+        while (playersForThisRound.length < numPlayersInMatches) {
+            let playerAddedInCycle = false;
+            for (const teamName of teamSelectionOrder) {
+                if (playersForThisRound.length >= numPlayersInMatches) break;
+                
+                const queue = teamPlayerQueues.get(teamName)!;
+                if (queue.length > 0) {
+                    const player = queue.shift()!;
+                    queue.push(player); // Move player to the back of the queue
+                    
+                    playersForThisRound.push(player);
+                    playerAddedInCycle = true;
+                }
+            }
+            if (!playerAddedInCycle) break; // No more players available in any team
+        }
+
+        // Update match counts for players in this round
+        playersForThisRound.forEach(p => {
+            matchCountPerPlayer.set(p.userId, (matchCountPerPlayer.get(p.userId) || 0) + 1);
+        });
+
+        // Determine byes for this round
+        const playingUserIds = new Set(playersForThisRound.map(p => p.userId));
+        const byeParticipants = allParticipantsFromTeams.filter(p => !playingUserIds.has(p.userId));
+        const byeDisplayString = byeParticipants.map(p => p.user.userName).join(', ') || '-';
+
+        // Distribute players to tables
+        const shuffledPlayersForRound = this.shuffleArray(playersForThisRound);
+        const roundTables: any[][] = Array.from({ length: numSimultaneousTables }, () => []);
+        for (let i = 0; i < shuffledPlayersForRound.length; i++) {
+            roundTables[i % numSimultaneousTables].push(shuffledPlayersForRound[i]);
+        }
+
+        // Format and add rows to the display table
+        roundTables.forEach((matchPlayers, tableIdx) => {
+            if (matchPlayers.length === 0) return;
+            const matchPlayerNames = matchPlayers.map(p => p.user.userName);
+            const matchPlayerInfo = matchPlayers.map(p => ({ id: p.user.id, name: p.user.userName }));
+
+            const rowData = {
+                matchId: 0,
+                round: totalRounds.toString(),
+                players: matchPlayerInfo,
+                displayCells: [`${totalRounds}`, matchPlayerNames.join(', '), byeDisplayString, '']
+            };
+            this.groupedMatchTables[tableIdx].data.push(rowData);
+        });
+    }
+
+    const avgMatchCount = Array.from(matchCountPerPlayer.values()).reduce((a, b) => a + b, 0) / matchCountPerPlayer.size;
+    this.message = `チーム構成の偏りをなくし、最低${minMatchesPerParticipant}試合の条件を満たすため、${totalRounds}回戦（1人あたり平均${avgMatchCount.toFixed(1)}試合）の対戦表を生成しました。`;
+  }
+
+  private generateRandomMatchTable(): void {
     const minMatchesPerParticipant = this.matchSettingsForm.get('minMatchesPerParticipant')?.value;
     const numActualParticipants = this.participants.length;
     const numPlayersPerMatch = this.playerCount;
