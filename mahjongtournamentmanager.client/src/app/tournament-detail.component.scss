@@ -1,299 +1,151 @@
 :host {
-  --light-bg: #f4f4f4;
-  --tile-bg: #ffffff;
-  --tile-border: #e0e0e0;
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --gold-accent: #c7a42c;
-  --green-accent: #28a745;
-  --red-accent: #dc3545;
-  --font-display: 'Kiwi Maru', serif;
-  --font-body: 'Noto Sans JP', sans-serif;
-  --light-pattern-bg: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px), #f4f4f4;
-}
-
-.mahjong-background {
-  background-color: var(--light-bg);
-  background-image: var(--light-pattern-bg);
-  background-size: 25px 25px;
-  font-family: var(--font-body);
-  color: var(--text-primary);
-  padding: 2rem 1rem;
+  display: block;
+  background-color: var(--sub-color);
   min-height: 100vh;
 }
 
-.navigation-header {
-  margin-bottom: 2rem;
-  text-align: left;
+.container {
+  padding-top: var(--space-5);
+  padding-bottom: var(--space-5);
 }
 
-.back-button {
-  background: transparent;
-  border: 1px solid #ccc;
-  color: #555;
-  font-family: var(--font-body);
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.back-button:hover {
-  background-color: #f0f0f0;
-  border-color: #aaa;
-}
-
-.tournament-detail-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.mahjong-tile {
-  background: var(--tile-bg);
-  border: 1px solid var(--tile-border);
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.mahjong-tile:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
-}
-
-.tournament-title h2 {
-  font-family: var(--font-display);
-  font-size: 3rem;
+.page-header {
   text-align: center;
-  color: var(--green-accent);
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-  margin: 0;
-  font-weight: 700;
+  margin-bottom: var(--space-5);
 }
 
-.detail-section h3 {
-  font-family: var(--font-display);
-  color: var(--text-primary);
-  border-bottom: 2px solid var(--green-accent);
-  padding-bottom: 0.75rem;
-  margin-bottom: 1.5rem;
-  font-size: 1.8rem;
-  display: flex;
-  align-items: center;
+.back-link {
+  display: inline-block;
+  margin-bottom: var(--space-3);
+  font-weight: var(--font-weight-medium);
+  color: var(--main-color);
+  opacity: 0.8;
 }
 
-.detail-section h3::before {
-  content: '🀄';
-  margin-right: 0.75rem;
-  font-size: 1.5em;
-  color: var(--green-accent);
+.page-header h1 {
+  margin-bottom: var(--space-2);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color-light);
+}
+
+.status-0 { background-color: #6c757d; } /* 企画中 */
+.status-1 { background-color: var(--accent-color); } /* 募集中 */
+.status-2 { background-color: #ffc107; color: var(--text-color); } /* 募集終了 */
+.status-3 { background-color: var(--main-color); } /* 終了 */
+
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.card.full-width {
+  grid-column: 1 / -1;
+}
+
+.card h3 {
+  margin-bottom: var(--space-3);
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: var(--space-2);
 }
 
 .rules-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2);
 }
 
-.detail-section p {
-  margin: 0.5rem 0;
-  font-size: 1rem;
-  color: var(--text-secondary);
-  strong {
-    color: var(--text-primary);
-    font-weight: 600;
-    margin-right: 0.5em; // ラベルと値の間にスペースを追加
-  }
+.rules-grid p, .card p {
+  margin: 0;
+  padding: var(--space-1) 0;
 }
 
 .comment-box {
-  background: #f9f9f9;
-  border-left: 4px solid var(--green-accent);
-  padding: 1rem 1.5rem;
   white-space: pre-wrap;
-  font-size: 1rem;
-  color: var(--text-secondary);
-  border-radius: 0 8px 8px 0;
-}
-
-.status-label {
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  color: #fff;
-  font-weight: bold;
-  font-size: 0.9rem;
-  &.status-0 { background: #6c757d; }
-  &.status-1 { background: var(--red-accent); }
-  &.status-2 { background: #343a40; }
-  &.status-3 { background: #000; }
+  line-height: 1.8;
 }
 
 .action-section {
   display: flex;
   justify-content: center;
-  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-5) 0;
   flex-wrap: wrap;
-  gap: 1.5rem;
-  margin: 3rem 0;
-}
-
-.mahjong-button {
-  background: #fff;
-  border: 2px solid var(--green-accent);
-  color: var(--green-accent);
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  padding: 0.8rem 2rem;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 100%;
-    background: var(--green-accent);
-    transition: all 0.4s ease;
-    z-index: -1;
-  }
-
-  &:hover {
-    color: #fff;
-    &::before {
-      width: 100%;
-    }
-  }
-
-  &.delete-button {
-    border-color: var(--red-accent);
-    color: var(--red-accent);
-    &::before { background: var(--red-accent); }
-    &:hover { color: #fff; }
-  }
-  &.edit-button {
-    border-color: var(--gold-accent);
-    color: var(--gold-accent);
-    &::before { background: var(--gold-accent); }
-    &:hover { color: #fff; }
-  }
 }
 
 .admin-actions {
   display: flex;
-  gap: 1.5rem;
+  gap: var(--space-3);
+}
+
+.table-responsive {
+  overflow-x: auto;
 }
 
 .participants-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1.5rem;
-  background: var(--tile-bg);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-
-  th, td {
-    padding: 1rem 1.2rem;
-    text-align: left;
-    border-bottom: 1px solid var(--tile-border);
-  }
-
-  th {
-    background-color: #f8f9fa;
-    color: var(--text-primary);
-    font-family: var(--font-display);
-    font-size: 1.1rem;
-  }
-
-  tbody tr {
-    transition: background-color 0.3s ease;
-  }
-
-  tbody tr:hover {
-    background-color: #f1f8f1;
-  }
-
-  .actions-column {
-    text-align: center;
-  }
-
-  .mahjong-button.remove-participant-button {
-    font-size: 0.9rem;
-    padding: 0.4rem 1rem;
-    border-color: var(--red-accent);
-    color: var(--red-accent);
-    background: #fff;
-    &::before { background: var(--red-accent); }
-    &:hover { color: #fff; }
-  }
+  margin-top: var(--space-3);
 }
 
-.loading-message, .error-message {
-  text-align: center;
-  font-size: 1.5rem;
-  color: var(--text-secondary);
-  background-color: rgba(255,255,255,0.8);
-  padding: 2rem;
-  border-radius: 8px;
+.participants-table th,
+.participants-table td {
+  padding: var(--space-2);
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.participants-table th {
+  font-weight: var(--font-weight-bold);
+}
+
+.actions-column {
+  text-align: right;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+}
+.btn-sm {
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.875rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6);
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border-left-color: var(--accent-color);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
-  .mahjong-background {
-    padding: 1rem 0;
-  }
-
-  .mahjong-tile {
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .tournament-title h2 {
-    font-size: 2rem;
-  }
-
-  .detail-section h3 {
-    font-size: 1.5rem;
-  }
-
-  .rules-grid {
+  .details-grid {
     grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-
-  .action-section {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .admin-actions {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .mahjong-button {
-    width: 100%;
-    font-size: 1.1rem;
-    padding: 0.8rem 1.5rem;
-  }
-
-  .participants-table {
-    th, td {
-      padding: 0.75rem;
-      font-size: 0.9rem;
-    }
   }
 }

@@ -1,26 +1,26 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow mb-3">
-  <div class="container-fluid">
-    <a class="navbar-brand" [routerLink]="['/']" (click)="isMenuCollapsed = true">
-      <img src="assets/icons/ycb_logo.svg" alt="YCBチャンネル" style="height: 32px;">
+<header class="main-header">
+  <div class="nav-container">
+    <a class="logo" [routerLink]="['/']" (click)="isMenuCollapsed = true">
+      <img src="assets/icons/ycb_logo.svg" alt="YCBチャンネル">
     </a>
-    <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed" [attr.aria-expanded]="!isMenuCollapsed" aria-controls="navbarNav">
-      <span class="navbar-toggler-icon"></span>
+    <button class="nav-toggle" type="button" (click)="isMenuCollapsed = !isMenuCollapsed" [attr.aria-expanded]="!isMenuCollapsed">
+      <span class="nav-toggle-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" [class.show]="!isMenuCollapsed" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item" [routerLinkActive]="'link-active'">
-          <a class="nav-link" [routerLink]="['/events']" (click)="isMenuCollapsed = true">イベント一覧</a>
+    <nav class="nav-menu" [class.is-active]="!isMenuCollapsed">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/events']" routerLinkActive="is-active" (click)="isMenuCollapsed = true">イベント一覧</a>
         </li>
-        <li class="nav-item" [routerLinkActive]="'link-active'" *ngIf="authService.hasRole('Admin')">
-          <a class="nav-link" [routerLink]="['/create-event']" (click)="isMenuCollapsed = true">企画作成</a>
+        <li class="nav-item" *ngIf="authService.hasRole('Admin')">
+          <a class="nav-link" [routerLink]="['/create-event']" routerLinkActive="is-active" (click)="isMenuCollapsed = true">企画作成</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" (click)="logout()">ログアウト</a>
         </li>
       </ul>
-    </div>
+    </nav>
   </div>
-</nav>
-<div class="container">
+</header>
+<main class="main-content">
   <router-outlet></router-outlet>
-</div>
+</main>

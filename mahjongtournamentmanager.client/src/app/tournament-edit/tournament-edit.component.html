@@ -1,61 +1,63 @@
-<div class="tournament-creation-container">
-  <button (click)="goBack()" class="back-button">＜ 戻る</button>
-  <h2>企画情報編集</h2>
-  <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="tournamentName">企画名</label>
-      <input type="text" id="tournamentName" formControlName="tournamentName">
-    </div>
-    <div class="form-group">
-      <label for="startDate">開始日</label>
-      <input type="date" id="startDate" formControlName="startDate">
-    </div>
-    <div class="form-group">
-      <label for="endDate">終了日</label>
-      <input type="date" id="endDate" formControlName="endDate">
-    </div>
+<div class="container">
+  <div class="card form-container">
+    <a (click)="goBack()" class="back-button">＜ 戻る</a>
+    <h2>企画情報編集</h2>
+    <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="tournamentName" class="form-label">企画名</label>
+        <input type="text" id="tournamentName" class="form-control" formControlName="tournamentName">
+      </div>
+      <div class="form-group">
+        <label for="startDate" class="form-label">開始日</label>
+        <input type="date" id="startDate" class="form-control" formControlName="startDate">
+      </div>
+      <div class="form-group">
+        <label for="endDate" class="form-label">終了日</label>
+        <input type="date" id="endDate" class="form-control" formControlName="endDate">
+      </div>
 
-    <h3>雀魂友人戦設定</h3>
-    <div class="form-row">
+      <h3>雀魂友人戦設定</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="gameType" class="form-label">対戦形式</label>
+          <select id="gameType" class="form-control" formControlName="gameType" (change)="onGameTypeSelectionChange()">
+            <option>ヨンマ</option>
+            <option>サンマ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="thinkTime" class="form-label">長考時間</label>
+          <select id="thinkTime" class="form-control" formControlName="thinkTime">
+            <option>3+5</option>
+            <option>5+10</option>
+            <option>5+20</option>
+            <option>60+0</option>
+            <option>300+0</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="allowFlying" formControlName="allowFlying">
+          <label for="allowFlying">飛びあり</label>
+        </div>
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="redDora" formControlName="redDora">
+          <label for="redDora">赤ドラあり</label>
+        </div>
+      </div>
       <div class="form-group">
-        <label for="gameType">対戦形式</label>
-        <select id="gameType" formControlName="gameType" (change)="onGameTypeSelectionChange()">
-          <option>ヨンマ</option>
-          <option>サンマ</option>
+        <label for="startingScore" class="form-label">配給原点</label>
+        <select id="startingScore" class="form-control" formControlName="startingScore">
+          <option *ngFor="let score of startingScoreOptions" [ngValue]="score">{{ score }}点</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="thinkTime">長考時間</label>
-        <select id="thinkTime" formControlName="thinkTime">
-          <option>3+5</option>
-          <option>5+10</option>
-          <option>5+20</option>
-          <option>60+0</option>
-          <option>300+0</option>
-        </select>
+        <label for="description" class="form-label">コメント</label>
+        <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group checkbox-group">
-        <input type="checkbox" id="allowFlying" formControlName="allowFlying">
-        <label for="allowFlying">飛びあり</label>
-      </div>
-      <div class="form-group checkbox-group">
-        <input type="checkbox" id="redDora" formControlName="redDora">
-        <label for="redDora">赤ドラあり</label>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="startingScore">配給原点</label>
-      <select id="startingScore" formControlName="startingScore">
-        <option *ngFor="let score of startingScoreOptions" [ngValue]="score">{{ score }}点</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="description">コメント</label>
-      <textarea id="description" formControlName="description" rows="3"></textarea>
-    </div>
-    <button type="submit" [disabled]="tournamentForm.invalid">更新</button>
-    <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
-  </form>
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">更新</button>
+      <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+    </form>
+  </div>
 </div>

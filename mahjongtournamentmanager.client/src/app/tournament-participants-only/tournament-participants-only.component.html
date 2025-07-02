@@ -1,35 +1,34 @@
-<div class="participants-only-container">
-  <div class="navigation-header">
-    <button [routerLink]="['/events', tournamentId]" class="back-button">＜ 戻る</button>
-  </div>
-
-  <h2 class="page-header">{{ tournamentName }} - 参加者ページ</h2>
+<div class="container">
+  <header class="page-header">
+    <a [routerLink]="['/events', tournamentId]" class="back-link">＜ 大会詳細に戻る</a>
+    <h1>{{ tournamentName }}</h1>
+    <p>参加者専用ページ</p>
+  </header>
 
   <div *ngIf="message" class="message-banner">{{ message }}</div>
 
-  <div class="card participants-section">
+  <!-- Participants & Team Section -->
+  <div class="card">
     <div class="card-header" (click)="toggleParticipantsVisibility()">
-      <span>参加者一覧・チーム分け</span>
+      <h2>参加者一覧・チーム分け</h2>
       <span class="toggle-icon" [style.transform]="isParticipantsVisible ? 'rotate(180deg)' : ''">▼</span>
     </div>
-    <div *ngIf="isParticipantsVisible">
+    <div *ngIf="isParticipantsVisible" class="card-content">
       <!-- Admin View: Draggable Team Formation UI -->
       <div *ngIf="isAdmin && !isTableSaved" class="team-formation-container" cdkDropListGroup>
         <div class="team-controls">
-          <button (click)="addTeam()" class="mahjong-button primary-button">チーム追加</button>
-          <button (click)="saveTeams()" class="mahjong-button save-button">チーム編成を保存</button>
+          <button (click)="addTeam()" class="btn btn-primary">チーム追加</button>
+          <button (click)="saveTeams()" class="btn btn-secondary">チーム編成を保存</button>
         </div>
 
-        <!-- Unassigned Participants List -->
-        <div class="unassigned-container team-list-container">
-          <h4>参加者一覧</h4>
-          <div cdkDropList [cdkDropListData]="unassignedParticipants" class="participant-list" (cdkDropListDropped)="drop($event)">
-            <div class="participant-box" *ngFor="let item of unassignedParticipants" cdkDrag>{{item.user.userName}}</div>
+        <div class="team-drag-area">
+          <div class="team-list-container">
+            <h4>参加者</h4>
+            <div cdkDropList [cdkDropListData]="unassignedParticipants" class="participant-list" (cdkDropListDropped)="drop($event)">
+              <div class="participant-box" *ngFor="let item of unassignedParticipants" cdkDrag>{{item.user.userName}}</div>
+            </div>
           </div>
-        </div>
 
-        <!-- Teams Grid -->
-        <div class="teams-grid">
           <div *ngFor="let team of teams" class="team-list-container">
             <div class="team-header">
               <h4>{{ team.name }}</h4>
@@ -42,89 +41,77 @@
         </div>
       </div>
 
-      <!-- Read-only View (Non-Admin or Locked) -->
+      <!-- Read-only View -->
       <div *ngIf="!isAdmin || isTableSaved" class="team-readonly-container">
         <div class="team-list-container">
-          <h4>参加者一覧</h4>
+          <h4>参加者</h4>
           <ul class="static-participants-list">
-            <li *ngFor="let participant of unassignedParticipants" class="participant-tag">{{ participant.user.userName }}</li>
+            <li *ngFor="let p of unassignedParticipants" class="participant-tag">{{ p.user.userName }}</li>
           </ul>
         </div>
         <div *ngFor="let team of teams" class="team-list-container">
           <h4>{{ team.name }}</h4>
           <ul class="static-participants-list">
-            <li *ngFor="let participant of team.participants" class="participant-tag">{{ participant.user.userName }}</li>
+            <li *ngFor="let p of team.participants" class="participant-tag">{{ p.user.userName }}</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!isTableSaved && isAdmin" class="card match-generation-section">
-    <h4 class="card-header">対戦表を作成</h4>
-    <form [formGroup]="matchSettingsForm" (ngSubmit)="generateMatchTable()">
-      <div class="form-group">
-        <label for="minMatches">最低試合数:</label>
-        <input type="number" id="minMatches" formControlName="minMatchesPerParticipant">
-      </div>
-      <button type="submit" class="mahjong-button primary-button">生成</button>
-    </form>
+  <!-- Match Generation Section -->
+  <div *ngIf="!isTableSaved && isAdmin" class="card">
+    <div class="card-header">
+      <h2>対戦表を作成</h2>
+    </div>
+    <div class="card-content">
+      <form [formGroup]="matchSettingsForm" (ngSubmit)="generateMatchTable()" class="match-generation-form">
+        <div class="form-group">
+          <label for="minMatches" class="form-label">最低試合数:</label>
+          <input type="number" id="minMatches" class="form-control" formControlName="minMatchesPerParticipant">
+        </div>
+        <button type="submit" class="btn btn-primary">生成</button>
+      </form>
+    </div>
   </div>
 
-  <div *ngIf="groupedMatchTables.length > 0" class="card match-tables-section">
+  <!-- Match Tables Section -->
+  <div *ngIf="groupedMatchTables.length > 0" class="card">
     <div class="card-header" (click)="toggleMatchTablesVisibility()">
-      <span>対戦表</span>
+      <h2>対戦表</h2>
       <span class="toggle-icon" [style.transform]="isMatchTablesVisible ? 'rotate(180deg)' : ''">▼</span>
     </div>
-    <div *ngIf="isMatchTablesVisible">
-      <div *ngFor="let table of groupedMatchTables" class="match-table">
-        <h3 class="match-table-header">{{ table.tableName }}</h3>
+    <div *ngIf="isMatchTablesVisible" class="card-content">
+      <div *ngFor="let table of groupedMatchTables" class="match-table-wrapper">
+        <h3>{{ table.tableName }}</h3>
         <div class="table-responsive">
-          <table>
+          <table class="participants-table">
             <thead>
               <tr>
-                <!-- The first column header (e.g., 'Round') -->
                 <th>{{ table.data[0][0] }}</th>
-                <!-- The second column header (e.g., 'Players') -->
                 <th>{{ table.data[0][1] }}</th>
-                <!-- The third column header (e.g., 'Bye'), with a class to hide it on mobile -->
-                <th class="bye-column">{{ table.data[0][2] }}</th>
-                <!-- The fourth column header (e.g., 'Schedule'), with a class to hide it on mobile -->
-                <th class="schedule-column">{{ table.data[0][3] }}</th>
-                <!-- The fifth column for actions -->
+                <th class="d-none d-md-table-cell">{{ table.data[0][2] }}</th>
+                <th class="d-none d-md-table-cell">{{ table.data[0][3] }}</th>
                 <th>日程</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let row of table.data.slice(1)">
-                <!-- Round Number -->
                 <td>{{ row.displayCells[0] }}</td>
-
-                <!-- Player List -->
                 <td>
                   <div class="player-list">
-                    <div *ngFor="let player of row.players"
-                         class="player-name"
-                         [class.submitted]="hasUserSubmittedAvailability(row.matchId, player.id)">
+                    <div *ngFor="let player of row.players" class="player-name" [class.submitted]="hasUserSubmittedAvailability(row.matchId, player.id)">
                       {{ player.name }}
                     </div>
                   </div>
                 </td>
-
-                <!-- Bye Players (will be hidden on mobile) -->
-                <td class="bye-column">{{ row.displayCells[2] }}</td>
-
-                <!-- Schedule Period (will be hidden on mobile) -->
-                <td class="schedule-column">{{ row.displayCells[3] }}</td>
-
-                <!-- Actions -->
+                <td class="d-none d-md-table-cell">{{ row.displayCells[2] }}</td>
+                <td class="d-none d-md-table-cell">{{ row.displayCells[3] }}</td>
                 <td>
                   <div class="schedule-controls">
-                    <!-- Schedule period, shown only on mobile -->
-                    <div class="schedule-period-inline">{{ row.displayCells[3] }}</div>
-                    <input *ngIf="isAdmin" type="date" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
-                    <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="mahjong-button save-button">保存</button>
-                    <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="mahjong-button adjust-button">希望日入力</button>
+                    <input *ngIf="isAdmin" type="date" class="form-control form-control-sm" [id]="'schedule-date-' + table.tableName + '-' + row.round" [value]="row.schedulingStartDate | date:'yyyy-MM-dd'">
+                    <button *ngIf="isAdmin" (click)="saveSchedulingStartDate(row, table.tableName)" class="btn btn-secondary btn-sm">保存</button>
+                    <button *ngIf="row.schedulingStartDate && isUserInMatch(row)" (click)="openCoordinator(row)" class="btn btn-primary btn-sm">希望日入力</button>
                   </div>
                 </td>
               </tr>
@@ -135,35 +122,37 @@
     </div>
   </div>
 
-  <div *ngIf="isAdmin" class="action-buttons">
-    <button *ngIf="groupedMatchTables.length > 0 && !isTableSaved" (click)="saveMatchTable()" class="mahjong-button primary-button">対戦表を保存</button>
+  <!-- Action Buttons -->
+  <div class="action-buttons" *ngIf="isAdmin">
+    <button *ngIf="groupedMatchTables.length > 0 && !isTableSaved" (click)="saveMatchTable()" class="btn btn-primary">対戦表を保存</button>
   </div>
 
-  <div *ngIf="isTableSaved" class="card result-registration-section">
+  <!-- Result Registration Section -->
+  <div *ngIf="isTableSaved" class="card">
     <div class="card-header" (click)="isResultFormVisible = !isResultFormVisible">
-      <span>対戦結果登録</span>
+      <h2>対戦結果登録</h2>
       <span class="toggle-icon" [style.transform]="isResultFormVisible ? 'rotate(180deg)' : ''">▼</span>
     </div>
-    <div *ngIf="isResultFormVisible">
-      <div *ngFor="let table of groupedMatchTables" class="match-table">
-        <h4 class="match-table-header">{{ table.tableName }}</h4>
+    <div *ngIf="isResultFormVisible" class="card-content">
+      <div *ngFor="let table of groupedMatchTables" class="match-table-wrapper">
+        <h3>{{ table.tableName }}</h3>
         <div class="table-responsive">
-          <table class="result-table">
+          <table class="result-table participants-table">
             <thead>
               <tr>
                 <th>№</th>
                 <th *ngFor="let player of table.data[1]?.players">{{ player.name }}</th>
-                <th>Action</th>
+                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of table.data.slice(1)" class="result-match-row">
+              <tr *ngFor="let row of table.data.slice(1)">
                 <td data-label="№">{{ row.round }}</td>
                 <td *ngFor="let player of row.players" [attr.data-label]="player.name">
-                  <input type="number" class="score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
+                  <input type="number" class="form-control form-control-sm score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
                 </td>
                 <td class="action-cell">
-                  <button (click)="saveResult(row.matchId)" class="mahjong-button save-button">保存</button>
+                  <button (click)="saveResult(row.matchId)" class="btn btn-secondary btn-sm">保存</button>
                 </td>
               </tr>
             </tbody>
@@ -173,15 +162,15 @@
     </div>
   </div>
 
-  <div *ngIf="isAdmin" class="action-buttons">
-    <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="mahjong-button danger-button">対戦表を削除</button>
+  <!-- Action Buttons -->
+  <div class="action-buttons" *ngIf="isAdmin">
+    <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="btn btn-danger">対戦表を削除</button>
   </div>
 
 </div>
 
-<app-schedule-coordinator 
-  *ngIf="isCoordinatorVisible" 
-  [roundInfo]="selectedRoundInfo" 
-  [players]="selectedMatchPlayers"
-  (close)="closeCoordinator($event)">
+<app-schedule-coordinator *ngIf="isCoordinatorVisible"
+                          [roundInfo]="selectedRoundInfo"
+                          [players]="selectedMatchPlayers"
+                          (close)="closeCoordinator($event)">
 </app-schedule-coordinator>
