@@ -1,7 +1,8 @@
 <div class="tournament-creation-container">
+  <button (click)="goBack()" class="back-button">＜ 戻る</button>
   <h2>企画情報編集</h2>
   <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
-    <div class.form-group>
+    <div class="form-group">
       <label for="tournamentName">企画名</label>
       <input type="text" id="tournamentName" formControlName="tournamentName">
     </div>
@@ -10,8 +11,8 @@
       <input type="date" id="startDate" formControlName="startDate">
     </div>
     <div class="form-group">
-        <label for="endDate">終了日</label>
-        <input type="date" id="endDate" formControlName="endDate">
+      <label for="endDate">終了日</label>
+      <input type="date" id="endDate" formControlName="endDate">
     </div>
 
     <h3>雀魂友人戦設定</h3>
@@ -46,11 +47,13 @@
     </div>
     <div class="form-group">
       <label for="startingScore">配給原点</label>
-      <input type="number" id="startingScore" formControlName="startingScore">
+      <select id="startingScore" formControlName="startingScore">
+        <option *ngFor="let score of startingScoreOptions" [ngValue]="score">{{ score }}点</option>
+      </select>
     </div>
     <div class="form-group">
       <label for="description">コメント</label>
-      <textarea id="description" formControlName="description" rows="4"></textarea>
+      <textarea id="description" formControlName="description" rows="3"></textarea>
     </div>
     <button type="submit" [disabled]="tournamentForm.invalid">更新</button>
     <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
