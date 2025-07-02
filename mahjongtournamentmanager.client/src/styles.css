@@ -201,3 +201,18 @@ button {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* 7. Responsive Adjustments */
+@media (max-width: 768px) {
+  .card {
+    padding: var(--space-3);
+  }
+
+  .container {
+    padding: 0 var(--space-2);
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.25rem; }
+}

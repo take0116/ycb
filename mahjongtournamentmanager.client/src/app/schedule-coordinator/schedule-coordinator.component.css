@@ -33,9 +33,10 @@
 }
 
 .dialog-header h3 {
+  font-family: var(--font-family-display);
   font-size: 1.8rem;
   font-weight: 600;
-  color: #333;
+  color: var(--main-color);
 }
 
 .dialog-body {

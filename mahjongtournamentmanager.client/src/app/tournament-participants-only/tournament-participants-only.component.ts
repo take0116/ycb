@@ -152,7 +152,6 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     if (matches.length === 0) return;
     const tables: { [key: string]: { tableName: string, data: any[] } } = {};
     matches.forEach(match => {
-      // Initialize scores for each match
       this.matchScores[match.id] = {};
       match.mahjongMatchPlayers.forEach((p: any) => {
         this.matchScores[match.id][p.user.id] = p.score;
@@ -167,13 +166,14 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       }
       
       const playerInfo = match.mahjongMatchPlayers.map((p: any) => ({ id: p.user.id, name: p.user.userName }));
-      const playerNames = playerInfo.map((p: any) => p.name);
+      const byeUserNames = match.byePlayerUserNames ? match.byePlayerUserNames.split(', ') : [];
       
       const rowData = {
         matchId: match.id,
         round: match.round.toString(),
         players: playerInfo,
-        displayCells: [match.round.toString(), playerNames.join(', '), match.byePlayerUserNames || '-', this.getSchedulePeriod(match.schedulingStartDate)],
+        byePlayers: byeUserNames,
+        displayCells: [match.round.toString(), '', '', this.getSchedulePeriod(match.schedulingStartDate)],
         schedulingStartDate: match.schedulingStartDate
       };
       
@@ -181,8 +181,8 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     });
     Object.values(tables).forEach(table => {
       table.data.sort((a, b) => {
-        if (Array.isArray(a)) return -1; // Header
-        if (Array.isArray(b)) return 1;  // Header
+        if (Array.isArray(a)) return -1;
+        if (Array.isArray(b)) return 1;
         return parseInt(a.round) - parseInt(b.round);
       });
     });
@@ -517,8 +517,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       byeCandidates = [...byeCandidates.slice(numByesPerRound), ...byesThisRound];
 
       const playingThisRoundNames = this.shuffleArray(allParticipantNames.filter(p => !byesThisRound.includes(p)));
-      const byeDisplayString = byesThisRound.join(', ') || '-';
-
+      
       for (let t = 0; t < numSimultaneousTables; t++) {
         const matchPlayerNames = playingThisRoundNames.splice(0, numPlayersPerMatch);
         const matchPlayers = allParticipants.filter(p => matchPlayerNames.includes(p.name));
@@ -527,7 +526,8 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
             matchId: 0,
             round: round.toString(),
             players: matchPlayers,
-            displayCells: [`${round}`, matchPlayerNames.join(', '), byeDisplayString, '']
+            byePlayers: byesThisRound,
+            displayCells: [`${round}`, '', '', '']
         };
         this.groupedMatchTables[t].data.push(rowData);
       }

@@ -105,7 +105,11 @@
                     </div>
                   </div>
                 </td>
-                <td class="d-none d-md-table-cell">{{ row.displayCells[2] }}</td>
+                <td class="d-none d-md-table-cell">
+                  <div class="player-list">
+                    <div *ngFor="let bye of row.byePlayers">{{ bye }}</div>
+                  </div>
+                </td>
                 <td class="d-none d-md-table-cell">{{ row.displayCells[3] }}</td>
                 <td>
                   <div class="schedule-controls">
