@@ -14,24 +14,28 @@ import { Router, RouterLink } from '@angular/router';
 export class LoginComponent {
   model: any = { username: '', password: '' };
   errorMessage: string = '';
+  showPassword = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
   login() {
     this.authService.login(this.model.username, this.model.password).subscribe({
       next: (response) => {
-        console.log('Login successful', response);
-        this.errorMessage = '';
-        this.router.navigate(['/events']); // ログイン成功後、企画一覧へリダイレクト
+        if (response) {
+          this.router.navigate(['/events']);
+        } else {
+          this.errorMessage = 'ログインに失敗しました。';
+        }
       },
       error: (error) => {
         console.error('Login failed', error);
-        if (error.error && error.error.Message) {
-          this.errorMessage = error.error.Message;
-        } else {
-          this.errorMessage = 'Login failed. Please try again.';
-        }
+        this.errorMessage = 'ログインに失敗しました。ユーザー名またはパスワードを確認してください。';
       }
     });
   }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 }
+
