@@ -79,3 +79,26 @@ h2 {
   padding: 0.75rem 1.25rem;
   border-radius: 4px;
 }
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin: 0;
+        padding: 20px;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}

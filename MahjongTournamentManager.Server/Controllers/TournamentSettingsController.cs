@@ -486,6 +486,27 @@ namespace MahjongTournamentManager.Server.Controllers
             return _context.TournamentSettings.Any(e => e.Id == id);
         }
 
+        [HttpPut("{id}/teams")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateTeams(int id, [FromBody] List<TeamUpdateRequest> request)
+        {
+            var participants = await _context.TournamentParticipants
+                                            .Where(p => p.TournamentSettingsId == id)
+                                            .ToListAsync();
+
+            foreach (var update in request)
+            {
+                var participant = participants.FirstOrDefault(p => p.UserId == update.UserId);
+                if (participant != null)
+                {
+                    participant.Team = update.Team;
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Teams updated successfully." });
+        }
+
         [HttpPost("matches/save-result")]
         [Authorize]
         public async Task<IActionResult> SaveResult([FromBody] SaveResultDto request)
@@ -528,5 +549,11 @@ namespace MahjongTournamentManager.Server.Controllers
     {
         public List<string> Times { get; set; }
         public List<string> DateTimes { get; set; }
+    }
+
+    public class TeamUpdateRequest
+    {
+        public string UserId { get; set; }
+        public string? Team { get; set; }
     }
 }
