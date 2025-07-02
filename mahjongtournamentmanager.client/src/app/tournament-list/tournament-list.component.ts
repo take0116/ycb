@@ -28,6 +28,8 @@ export class TournamentListComponent implements OnInit {
       next: data => {
         this.tournaments = data;
         this.isLoading = false;
+        // Trigger scroll-based animations after data loads
+        setTimeout(() => this.initScrollAnimations(), 0);
       },
       error: err => {
         console.error(err);
@@ -37,8 +39,18 @@ export class TournamentListComponent implements OnInit {
     });
   }
 
-  getAccentColor(index: number): string {
-    const colors = ['#4285F4', '#DB4437', '#F4B400', '#0F9D58'];
-    return colors[index % colors.length];
+  private initScrollAnimations(): void {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.setAttribute('data-scroll', 'in');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('[data-scroll]').forEach(el => {
+      observer.observe(el);
+    });
   }
 }

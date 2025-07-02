@@ -22,6 +22,7 @@ export class TournamentDetailComponent implements OnInit {
   isAdmin: boolean = false;
   userId: string | null = null;
   message: string = '';
+  isLoading: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -42,10 +43,12 @@ export class TournamentDetailComponent implements OnInit {
           this.checkParticipation();
         }
         this.getParticipants();
+        this.isLoading = false;
       },
       error: err => {
         console.error(err);
         this.message = '大会の読み込みに失敗しました。';
+        this.isLoading = false;
       }
     });
   }

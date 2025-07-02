@@ -1,29 +1,32 @@
-<div class="tournament-list-container">
+<div class="container">
+  <header class="page-header">
+    <h1>開催中のイベント</h1>
+    <p>参加したいイベントを選んでください。</p>
+  </header>
 
   <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
   <div *ngIf="isLoading" class="loading-spinner">
     <div class="spinner"></div>
-    <p>読み込み中...</p>
   </div>
 
   <div *ngIf="!isLoading && tournaments.length === 0 && !errorMessage" class="no-tournaments">
-    <p>開催中のイベントはありません。</p>
+    <p>現在、開催中のイベントはありません。</p>
   </div>
 
-  <div *ngIf="!isLoading && tournaments.length > 0" class="tournament-cards">
-    <div class="tournament-card" *ngFor="let tournament of tournaments; let i = index" [ngStyle]="{'--card-accent-color': getAccentColor(i)}" [routerLink]="tournament.detailUrl">
+  <div *ngIf="!isLoading && tournaments.length > 0" class="tournament-grid">
+    <div class="card tournament-card" *ngFor="let tournament of tournaments" [routerLink]="tournament.detailUrl" data-scroll>
       <div class="card-header">
         <span class="game-title">{{ tournament.gameTitle }}</span>
-        <span class="status-badge" [ngClass]="{
-          'status-planning': tournament.status === 0,
-          'status-recruiting': tournament.status === 1,
-          'status-recruitment-closed': tournament.status === 2,
-          'status-finished': tournament.status === 3
-        }">{{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}</span>
+        <span class="status-badge status-{{tournament.status}}">
+          {{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}
+        </span>
       </div>
-      <h3>{{ tournament.tournamentName }}</h3>
-      <p class="tournament-description">{{ tournament.description }}</p>
+      <h3 class="card-title">{{ tournament.tournamentName }}</h3>
+      <p class="card-description">{{ tournament.description }}</p>
+      <div class="card-footer">
+        <span class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }} から</span>
+      </div>
     </div>
   </div>
 </div>

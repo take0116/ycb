@@ -55,7 +55,7 @@
       <label for="description">コメント</label>
       <textarea id="description" formControlName="description" rows="3"></textarea>
     </div>
-    <button type="submit" [disabled]="tournamentForm.invalid">更新</button>
+    <button type="submit" class="btn btn-primary" [disabled]="tournamentForm.invalid">更新</button>
     <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
   </form>
 </div>
