@@ -39,7 +39,6 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   // Team Formation Properties
   unassignedParticipants: any[] = [];
   teams: { name: string, participants: any[] }[] = [];
-  teamNameCounter = 1;
 
   matchAvailabilities: { [matchId: number]: Set<string> } = {};
   matchScores: { [matchId: string]: { [userId: string]: number | null } } = {};
@@ -429,11 +428,19 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     });
     
     this.teams = Array.from(teamsMap.entries()).map(([name, participants]) => ({ name, participants }));
-    this.teamNameCounter = this.teams.length + 1;
   }
 
   addTeam(): void {
-    this.teams.push({ name: `チーム${this.teamNameCounter++}`, participants: [] });
+    const existingTeamNumbers = this.teams
+      .map(team => parseInt(team.name.replace('チーム', ''), 10))
+      .filter(num => !isNaN(num));
+    
+    let newTeamNumber = 1;
+    while (existingTeamNumbers.includes(newTeamNumber)) {
+      newTeamNumber++;
+    }
+    
+    this.teams.push({ name: `チーム${newTeamNumber}`, participants: [] });
   }
 
   removeTeam(teamName: string): void {
