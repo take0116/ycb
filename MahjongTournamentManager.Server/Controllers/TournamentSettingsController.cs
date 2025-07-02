@@ -266,7 +266,7 @@ namespace MahjongTournamentManager.Server.Controllers
                     {
                         TournamentSettingsId = id,
                         Round = int.Parse(rowData.Round),
-                        ByePlayerUserNames = rowData.DisplayCells.Last(),
+                        ByePlayerUserNames = rowData.DisplayCells.ElementAtOrDefault(2) ?? "-",
                         MahjongMatchPlayers = new List<MahjongMatchPlayer>()
                     };
 
