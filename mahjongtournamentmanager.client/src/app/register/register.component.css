@@ -66,3 +66,17 @@ button[type="submit"]:hover {
   font-size: 0.95rem;
   text-align: center;
 }
+
+.password-group {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  bottom: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #aaa;
+}

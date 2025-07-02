@@ -15,25 +15,52 @@ import { switchMap } from 'rxjs';
 export class RegisterComponent {
   model: any = { username: '', password: '' };
   errorMessage: string = '';
+  showPassword = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
   register() {
-    this.authService.register(this.model.username, this.model.password).pipe(
-      switchMap(() => {
-        console.log('Registration successful');
-        return this.authService.login(this.model.username, this.model.password);
-      })
-    ).subscribe({
-      next: () => {
-        // ログイン成功後、AuthServiceがホームページにリダイレクトします
-      },
-      error: (error) => {
-        console.error('Registration or login failed', error);
-        // 登録またはログインに失敗した場合、エラーメッセージを表示し、ログインページにリダイレクトします
-        this.errorMessage = '登録またはログインに失敗しました。';
-        this.router.navigate(['/login']);
-      }
-    });
+    this.authService.register(this.model.username, this.model.password)
+      .subscribe({
+        next: () => {
+          // Registration successful, now log in to get the token
+          this.authService.login(this.model.username, this.model.password).subscribe({
+            next: (loginResponse) => {
+              if (loginResponse) {
+                this.router.navigate(['/events']);
+              } else {
+                // This case should ideally not happen if registration succeeds
+                this.errorMessage = '登録後の自動ログインに失敗しました。手動でログインしてください。';
+                this.router.navigate(['/login']);
+              }
+            },
+            error: (loginError) => {
+              console.error('Auto-login after registration failed', loginError);
+              this.errorMessage = '登録後の自動ログインに失敗しました。手動でログインしてください。';
+              this.router.navigate(['/login']);
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Registration failed', err);
+          if (err.status === 400 && err.error) {
+            // Flatten all error messages from the ModelState object
+            const errorMessages = Object.values(err.error).flat().join(' ');
+            
+            // Check for the default Identity error message for duplicate username
+            if (errorMessages.includes('is already taken') || errorMessages.includes('既に使用されています')) {
+              this.errorMessage = 'このユーザー名は既に使用されています。';
+            } else {
+              this.errorMessage = `登録に失敗しました: ${errorMessages}`;
+            }
+          } else {
+            this.errorMessage = '不明なエラーが発生しました。';
+          }
+        }
+      });
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }
