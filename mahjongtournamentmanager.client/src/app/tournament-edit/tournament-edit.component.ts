@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -33,12 +33,14 @@ export class TournamentEditComponent implements OnInit {
   isLoading = true;
   isSubmitting = false;
   errorMessage: string = '';
+  startingScoreOptions: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private location: Location
   ) {
     this.tournamentForm = this.fb.group({
       tournamentName: ['', Validators.required],
@@ -59,6 +61,7 @@ export class TournamentEditComponent implements OnInit {
     if (this.tournamentId) {
       this.http.get<Tournament>(`${this.apiUrl}/${this.tournamentId}`).subscribe(tournament => {
         this.tournamentForm.patchValue(tournament);
+        this.onGameTypeSelectionChange(); // Set initial score options
         this.isLoading = false;
       });
     } else {
@@ -70,6 +73,10 @@ export class TournamentEditComponent implements OnInit {
     const gameType = this.tournamentForm.get('gameType')?.value;
     const playerCount = gameType === 'サンマ' ? 3 : 4;
     this.tournamentForm.patchValue({ playerCount: playerCount });
+    this.startingScoreOptions = gameType === 'サンマ' ? [35000, 40000] : [25000, 30000];
+    if (!this.startingScoreOptions.includes(this.tournamentForm.get('startingScore')?.value)) {
+      this.tournamentForm.patchValue({ startingScore: this.startingScoreOptions[0] });
+    }
   }
 
   onSubmit(): void {
@@ -85,5 +92,9 @@ export class TournamentEditComponent implements OnInit {
         }
       });
     }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
