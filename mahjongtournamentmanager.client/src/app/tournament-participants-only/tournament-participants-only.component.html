@@ -14,12 +14,13 @@
     </div>
     <div *ngIf="isParticipantsVisible">
       <!-- Admin View: Draggable Team Formation UI -->
-      <div *ngIf="isAdmin" class="team-formation-container">
+      <div *ngIf="isAdmin && !isTableSaved" class="team-formation-container" cdkDropListGroup>
         <div class="team-controls">
           <button (click)="addTeam()" class="mahjong-button primary-button">チーム追加</button>
           <button (click)="saveTeams()" class="mahjong-button save-button">チーム編成を保存</button>
         </div>
 
+        <!-- Unassigned Participants List -->
         <div class="unassigned-container team-list-container">
           <h4>参加者一覧</h4>
           <div cdkDropList [cdkDropListData]="unassignedParticipants" class="participant-list" (cdkDropListDropped)="drop($event)">
@@ -27,7 +28,8 @@
           </div>
         </div>
 
-        <div class="teams-grid" cdkDropListGroup>
+        <!-- Teams Grid -->
+        <div class="teams-grid">
           <div *ngFor="let team of teams" class="team-list-container">
             <div class="team-header">
               <h4>{{ team.name }}</h4>
@@ -40,17 +42,17 @@
         </div>
       </div>
 
-      <!-- Non-Admin View: Read-only Team View -->
-      <div *ngIf="!isAdmin" class="team-readonly-container">
+      <!-- Read-only View (Non-Admin or Locked) -->
+      <div *ngIf="!isAdmin || isTableSaved" class="team-readonly-container">
         <div class="team-list-container">
           <h4>参加者一覧</h4>
-          <ul class="participants-list">
+          <ul class="static-participants-list">
             <li *ngFor="let participant of unassignedParticipants" class="participant-tag">{{ participant.user.userName }}</li>
           </ul>
         </div>
         <div *ngFor="let team of teams" class="team-list-container">
           <h4>{{ team.name }}</h4>
-          <ul class="participants-list">
+          <ul class="static-participants-list">
             <li *ngFor="let participant of team.participants" class="participant-tag">{{ participant.user.userName }}</li>
           </ul>
         </div>
