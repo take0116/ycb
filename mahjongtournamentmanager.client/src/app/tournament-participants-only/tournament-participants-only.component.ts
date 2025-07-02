@@ -8,11 +8,12 @@ import { ScheduleCoordinatorComponent } from '../schedule-coordinator/schedule-c
 import { environment } from '../../environments/environment';
 import { forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-tournament-participants-only',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ScheduleCoordinatorComponent, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, ScheduleCoordinatorComponent, RouterModule, DragDropModule],
   templateUrl: './tournament-participants-only.component.html',
   styleUrls: ['./tournament-participants-only.component.css']
 })
@@ -34,6 +35,11 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   selectedRoundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
   selectedMatchPlayers: { id: string, name: string }[] = [];
   isAdmin: boolean = false;
+
+  // Team Formation Properties
+  unassignedParticipants: any[] = [];
+  teams: { name: string, participants: any[] }[] = [];
+  teamNameCounter = 1;
 
   matchAvailabilities: { [matchId: number]: Set<string> } = {};
   matchScores: { [matchId: string]: { [userId: string]: number | null } } = {};
@@ -81,6 +87,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     this.http.get<any>(`${this.apiUrl}/${tournamentId}/participants`).subscribe({
       next: (data) => {
         this.participants = data.participants;
+        this.initializeTeams();
       },
       error: (error) => console.error('Error fetching participants', error)
     });
@@ -407,6 +414,67 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     const finalMatchCount = totalRounds - (totalRounds * numByesPerRound / numActualParticipants);
     this.message = `全参加者の抜け番回数を完全に均等にするため、${totalRounds}回戦（1人あたり${finalMatchCount}試合）の対戦表を生成しました。`;
   }
+
+  // --- Team Formation Methods ---
+  initializeTeams(): void {
+    // Keep the original participants list for non-admin view
+    this.unassignedParticipants = this.participants.filter(p => !p.team);
+    
+    const teamsMap = new Map<string, any[]>();
+    this.participants.filter(p => p.team).forEach(p => {
+      if (!teamsMap.has(p.team)) {
+        teamsMap.set(p.team, []);
+      }
+      teamsMap.get(p.team)?.push(p);
+    });
+    
+    this.teams = Array.from(teamsMap.entries()).map(([name, participants]) => ({ name, participants }));
+    this.teamNameCounter = this.teams.length + 1;
+  }
+
+  addTeam(): void {
+    this.teams.push({ name: `チーム${this.teamNameCounter++}`, participants: [] });
+  }
+
+  removeTeam(teamName: string): void {
+    const teamIndex = this.teams.findIndex(t => t.name === teamName);
+    if (teamIndex > -1) {
+      const removedTeam = this.teams.splice(teamIndex, 1)[0];
+      this.unassignedParticipants.push(...removedTeam.participants);
+    }
+  }
+
+  drop(event: CdkDragDrop<any[]>): void {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+  }
+
+  saveTeams(): void {
+    const updateRequests: { userId: string, team: string | null }[] = [];
+    this.unassignedParticipants.forEach(p => updateRequests.push({ userId: p.userId, team: null }));
+    this.teams.forEach(team => {
+      team.participants.forEach(p => updateRequests.push({ userId: p.userId, team: team.name }));
+    });
+
+    this.http.put(`${this.apiUrl}/${this.tournamentId}/teams`, updateRequests).subscribe({
+      next: () => {
+        this.message = 'チーム編成を保存しました。';
+      },
+      error: (err) => {
+        console.error('Failed to save teams', err);
+        this.message = 'チーム編成の保存に失敗しました。';
+      }
+    });
+  }
+  // --- End of Team Formation Methods ---
 
   saveResult(matchId: number): void {
     const scores = this.matchScores[matchId];

@@ -9,12 +9,53 @@
 
   <div class="card participants-section">
     <div class="card-header" (click)="toggleParticipantsVisibility()">
-      <span>参加者一覧</span>
+      <span>参加者一覧・チーム分け</span>
       <span class="toggle-icon" [style.transform]="isParticipantsVisible ? 'rotate(180deg)' : ''">▼</span>
     </div>
-    <ul *ngIf="isParticipantsVisible" class="participants-list">
-      <li *ngFor="let participant of participants" class="participant-tag">{{ participant.user.userName }}</li>
-    </ul>
+    <div *ngIf="isParticipantsVisible">
+      <!-- Admin View: Draggable Team Formation UI -->
+      <div *ngIf="isAdmin" class="team-formation-container">
+        <div class="team-controls">
+          <button (click)="addTeam()" class="mahjong-button primary-button">チーム追加</button>
+          <button (click)="saveTeams()" class="mahjong-button save-button">チーム編成を保存</button>
+        </div>
+
+        <div class="unassigned-container team-list-container">
+          <h4>参加者一覧</h4>
+          <div cdkDropList [cdkDropListData]="unassignedParticipants" class="participant-list" (cdkDropListDropped)="drop($event)">
+            <div class="participant-box" *ngFor="let item of unassignedParticipants" cdkDrag>{{item.user.userName}}</div>
+          </div>
+        </div>
+
+        <div class="teams-grid" cdkDropListGroup>
+          <div *ngFor="let team of teams" class="team-list-container">
+            <div class="team-header">
+              <h4>{{ team.name }}</h4>
+              <button (click)="removeTeam(team.name)" class="remove-team-button">×</button>
+            </div>
+            <div cdkDropList [cdkDropListData]="team.participants" class="participant-list" (cdkDropListDropped)="drop($event)">
+              <div class="participant-box" *ngFor="let item of team.participants" cdkDrag>{{item.user.userName}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Non-Admin View: Read-only Team View -->
+      <div *ngIf="!isAdmin" class="team-readonly-container">
+        <div class="team-list-container">
+          <h4>参加者一覧</h4>
+          <ul class="participants-list">
+            <li *ngFor="let participant of unassignedParticipants" class="participant-tag">{{ participant.user.userName }}</li>
+          </ul>
+        </div>
+        <div *ngFor="let team of teams" class="team-list-container">
+          <h4>{{ team.name }}</h4>
+          <ul class="participants-list">
+            <li *ngFor="let participant of team.participants" class="participant-tag">{{ participant.user.userName }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div *ngIf="!isTableSaved && isAdmin" class="card match-generation-section">

@@ -11,6 +11,8 @@ namespace MahjongTournamentManager.Server.Models
         public IdentityUser User { get; set; } // Add this line for navigation property
         public int TournamentSettingsId { get; set; }
         public TournamentSettings TournamentSettings { get; set; }
-        public DateTime JoinedDate { get; set; } // Renamed from JoinedAt
+        public DateTime JoinedDate { get; set; }
+
+        public string? Team { get; set; }
     }
 }
