@@ -527,7 +527,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
             round: round.toString(),
             players: matchPlayers,
             byePlayers: byesThisRound,
-            displayCells: [`${round}`, '', '', '']
+            displayCells: [`${round}`, matchPlayerNames.join(', '), byesThisRound.join(', ') || '-', '']
         };
         this.groupedMatchTables[t].data.push(rowData);
       }

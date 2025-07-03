@@ -140,27 +140,19 @@
     <div *ngIf="isResultFormVisible" class="card-content">
       <div *ngFor="let table of groupedMatchTables" class="match-table-wrapper">
         <h3>{{ table.tableName }}</h3>
-        <div class="table-responsive">
-          <table class="result-table participants-table">
-            <thead>
-              <tr>
-                <th>№</th>
-                <th *ngFor="let player of table.data[1]?.players">{{ player.name }}</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of table.data.slice(1)">
-                <td data-label="№">{{ row.round }}</td>
-                <td *ngFor="let player of row.players" [attr.data-label]="player.name">
-                  <input type="number" class="form-control form-control-sm score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
-                </td>
-                <td class="action-cell">
-                  <button (click)="saveResult(row.matchId)" class="btn btn-secondary btn-sm">保存</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="result-cards-container">
+          <div *ngFor="let row of table.data.slice(1)" class="result-card">
+            <div class="result-card-header">
+              <h4>第{{ row.round }}回戦</h4>
+              <button (click)="saveResult(row.matchId)" class="btn btn-secondary btn-sm">保存</button>
+            </div>
+            <div class="result-card-body">
+              <div *ngFor="let player of row.players" class="player-score-item">
+                <label [for]="'score-' + row.matchId + '-' + player.id" class="player-name">{{ player.name }}</label>
+                <input type="number" [id]="'score-' + row.matchId + '-' + player.id" class="form-control form-control-sm score-input" [(ngModel)]="matchScores[row.matchId][player.id]">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
