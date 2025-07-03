@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 
 interface Tournament {
   id: string;
+  gameTitle: string;
   tournamentName: string;
   description: string;
   playerCount: number;
@@ -17,6 +18,7 @@ interface Tournament {
   allowFlying: boolean;
   redDora: boolean;
   startingScore: number;
+  status: number;
 }
 
 @Component({
@@ -27,9 +29,12 @@ interface Tournament {
   imports: [CommonModule, ReactiveFormsModule]
 })
 export class TournamentEditComponent implements OnInit {
-  private apiUrl = `${environment.apiUrl}/api/TournamentSettings`;
+  private mahjongApiUrl = `${environment.apiUrl}/api/TournamentSettings`;
+  private splatoonApiUrl = `${environment.apiUrl}/api/SplatoonTournaments`;
   tournamentForm: FormGroup;
+  splatoonTournamentForm: FormGroup;
   tournamentId: string | null = null;
+  gameTitle: string | null = null;
   isLoading = true;
   isSubmitting = false;
   errorMessage: string = '';
@@ -52,17 +57,42 @@ export class TournamentEditComponent implements OnInit {
       thinkTime: ['60+0', Validators.required],
       allowFlying: [true],
       redDora: [true],
-      startingScore: [25000, Validators.required]
+      startingScore: [25000, Validators.required],
+      status: [1, Validators.required]
+    });
+
+    this.splatoonTournamentForm = this.fb.group({
+      tournamentName: ['', Validators.required],
+      eventDate: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      gameMode: ['プライベートマッチ', Validators.required],
+      status: [1, Validators.required],
+      comment: ['']
     });
   }
 
   ngOnInit(): void {
     this.tournamentId = this.route.snapshot.paramMap.get('id');
     if (this.tournamentId) {
-      this.http.get<Tournament>(`${this.apiUrl}/${this.tournamentId}`).subscribe(tournament => {
-        this.tournamentForm.patchValue(tournament);
-        this.onGameTypeSelectionChange(); // Set initial score options
-        this.isLoading = false;
+      // This is a bit of a hack. We don't know the game type from the URL,
+      // so we have to fetch from both endpoints and see which one returns data.
+      this.http.get<Tournament>(`${this.mahjongApiUrl}/${this.tournamentId}`).subscribe({
+        next: tournament => {
+          if (tournament) {
+            this.gameTitle = '雀魂';
+            this.tournamentForm.patchValue(tournament);
+            this.onGameTypeSelectionChange(); // Set initial score options
+            this.isLoading = false;
+          }
+        },
+        error: () => {
+          this.http.get<any>(`${this.splatoonApiUrl}/${this.tournamentId}`).subscribe(tournament => {
+            this.gameTitle = 'スプラトゥーン';
+            this.splatoonTournamentForm.patchValue(tournament);
+            this.isLoading = false;
+          });
+        }
       });
     } else {
       this.isLoading = false;
@@ -80,17 +110,33 @@ export class TournamentEditComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.tournamentForm.valid && this.tournamentId) {
+    if (this.tournamentId) {
       this.isSubmitting = true;
-      const tournamentData = { id: +this.tournamentId, ...this.tournamentForm.value };
-      this.http.put(`${this.apiUrl}/${this.tournamentId}`, tournamentData).subscribe({
-        next: () => this.router.navigate(['/events', this.tournamentId]),
-        error: (err) => {
-          console.error(err);
-          this.errorMessage = '更新に失敗しました。';
-          this.isSubmitting = false;
+      if (this.gameTitle === '雀魂') {
+        if (this.tournamentForm.valid) {
+          const tournamentData = { id: +this.tournamentId, ...this.tournamentForm.value };
+          this.http.put(`${this.mahjongApiUrl}/${this.tournamentId}`, tournamentData).subscribe({
+            next: () => this.router.navigate(['/events', this.tournamentId]),
+            error: (err) => {
+              console.error(err);
+              this.errorMessage = '更新に失敗しました。';
+              this.isSubmitting = false;
+            }
+          });
         }
-      });
+      } else if (this.gameTitle === 'スプラトゥーン') {
+        if (this.splatoonTournamentForm.valid) {
+          const tournamentData = { id: +this.tournamentId, ...this.splatoonTournamentForm.value };
+          this.http.put(`${this.splatoonApiUrl}/${this.tournamentId}`, tournamentData).subscribe({
+            next: () => this.router.navigate(['/splatoon-event', this.tournamentId]),
+            error: (err) => {
+              console.error(err);
+              this.errorMessage = '更新に失敗しました。';
+              this.isSubmitting = false;
+            }
+          });
+        }
+      }
     }
   }
 

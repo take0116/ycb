@@ -181,6 +181,7 @@ namespace MahjongTournamentManager.Server.Controllers
             existingTournament.EndTime = splatoonTournament.EndTime;
             existingTournament.GameMode = splatoonTournament.GameMode;
             existingTournament.Comment = splatoonTournament.Comment;
+            existingTournament.Status = splatoonTournament.Status;
 
             try
             {
