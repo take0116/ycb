@@ -97,4 +97,22 @@ export class SplatoonTournamentDetailComponent implements OnInit {
       });
     }
   }
+
+  share(): void {
+    const shareData = {
+      title: this.tournament.tournamentName,
+      text: `スプラトゥーン大会「${this.tournament.tournamentName}」に参加しよう！`,
+      url: window.location.href
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => console.log('Successfully shared'))
+        .catch((error) => console.error('Error sharing', error));
+    } else {
+      navigator.clipboard.writeText(shareData.url)
+        .then(() => alert('大会URLをクリップボードにコピーしました。'))
+        .catch(err => console.error('Could not copy text: ', err));
+    }
+  }
 }
