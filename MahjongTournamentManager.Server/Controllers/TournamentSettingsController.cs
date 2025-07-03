@@ -361,6 +361,7 @@ namespace MahjongTournamentManager.Server.Controllers
             existingTournament.RedDora = tournamentSettings.RedDora;
             existingTournament.StartingScore = tournamentSettings.StartingScore;
             existingTournament.Description = tournamentSettings.Description;
+            existingTournament.Status = tournamentSettings.Status;
 
             try
             {

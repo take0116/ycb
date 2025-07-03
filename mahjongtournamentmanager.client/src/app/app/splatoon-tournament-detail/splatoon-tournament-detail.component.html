@@ -6,6 +6,7 @@
       <p class="status-badge status-{{tournament.status}}">
         {{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}
       </p>
+      <button (click)="share()" class="share-button"><i class="fas fa-share-alt"></i></button>
     </header>
 
     <div class="main-content">

@@ -26,7 +26,7 @@ export class TournamentListComponent implements OnInit {
     this.isAdmin = this.authService.hasRole('Admin');
     this.http.get<TournamentListItem[]>(this.apiUrl).subscribe({
       next: data => {
-        this.tournaments = data;
+        this.tournaments = this.sortTournaments(data);
         this.isLoading = false;
         // Trigger scroll-based animations after data loads
         setTimeout(() => this.initScrollAnimations(), 0);
@@ -36,6 +36,28 @@ export class TournamentListComponent implements OnInit {
         this.errorMessage = '一覧の取得に失敗しました。';
         this.isLoading = false;
       }
+    });
+  }
+
+  private sortTournaments(tournaments: TournamentListItem[]): TournamentListItem[] {
+    const statusOrder: { [key: number]: number } = {
+      1: 1, // 募集中
+      0: 2, // 企画中
+      2: 3, // 募集終了
+      3: 4  // 終了
+    };
+
+    return tournaments.sort((a, b) => {
+      const statusA = statusOrder[a.status] || 99;
+      const statusB = statusOrder[b.status] || 99;
+
+      if (statusA !== statusB) {
+        return statusA - statusB;
+      }
+
+      const dateA = new Date(a.startDate).getTime();
+      const dateB = new Date(b.startDate).getTime();
+      return dateA - dateB;
     });
   }
 

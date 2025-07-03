@@ -114,4 +114,22 @@ export class TournamentDetailComponent implements OnInit {
   viewParticipantsOnly(): void {
     this.router.navigate(['/tournament-participants-only', this.tournament.id]);
   }
+
+  share(): void {
+    const shareText = `${this.tournament.tournamentName}\n${window.location.href}`;
+    const shareData = {
+      title: this.tournament.tournamentName,
+      text: shareText,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => console.log('Successfully shared'))
+        .catch((error) => console.error('Error sharing', error));
+    } else {
+      navigator.clipboard.writeText(shareText)
+        .then(() => alert('大会情報をクリップボードにコピーしました。'))
+        .catch(err => console.error('Could not copy text: ', err));
+    }
+  }
 }

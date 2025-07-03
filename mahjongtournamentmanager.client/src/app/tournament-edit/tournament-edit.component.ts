@@ -81,15 +81,25 @@ export class TournamentEditComponent implements OnInit {
         next: tournament => {
           if (tournament) {
             this.gameTitle = '雀魂';
-            this.tournamentForm.patchValue(tournament);
+            // Format dates before patching
+            const formattedTournament = {
+              ...tournament,
+              startDate: tournament.startDate.split('T')[0],
+              endDate: tournament.endDate.split('T')[0]
+            };
+            this.tournamentForm.patchValue(formattedTournament);
             this.onGameTypeSelectionChange(); // Set initial score options
             this.isLoading = false;
           }
         },
         error: () => {
           this.http.get<any>(`${this.splatoonApiUrl}/${this.tournamentId}`).subscribe(tournament => {
-            this.gameTitle = 'スプラトゥーン';
-            this.splatoonTournamentForm.patchValue(tournament);
+            this.gameTitle = 'スプラトゥ��ン';
+            const formattedTournament = {
+              ...tournament,
+              eventDate: tournament.eventDate.split('T')[0]
+            };
+            this.splatoonTournamentForm.patchValue(formattedTournament);
             this.isLoading = false;
           });
         }
@@ -115,6 +125,7 @@ export class TournamentEditComponent implements OnInit {
       if (this.gameTitle === '雀魂') {
         if (this.tournamentForm.valid) {
           const tournamentData = { id: +this.tournamentId, ...this.tournamentForm.value };
+          tournamentData.status = +tournamentData.status; // Ensure status is a number
           this.http.put(`${this.mahjongApiUrl}/${this.tournamentId}`, tournamentData).subscribe({
             next: () => this.router.navigate(['/events', this.tournamentId]),
             error: (err) => {
@@ -127,6 +138,7 @@ export class TournamentEditComponent implements OnInit {
       } else if (this.gameTitle === 'スプラトゥーン') {
         if (this.splatoonTournamentForm.valid) {
           const tournamentData = { id: +this.tournamentId, ...this.splatoonTournamentForm.value };
+          tournamentData.status = +tournamentData.status; // Ensure status is a number
           this.http.put(`${this.splatoonApiUrl}/${this.tournamentId}`, tournamentData).subscribe({
             next: () => this.router.navigate(['/splatoon-event', this.tournamentId]),
             error: (err) => {
