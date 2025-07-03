@@ -1,29 +1,33 @@
 <div class="container">
   <div class="card form-container">
     <a (click)="goBack()" class="back-button">＜ 戻る</a>
-    <h2>スプラトゥーン企画編集</h2>
-    <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
+    <h2>{{ isEditMode ? 'スプラトゥーン企画の編集' : 'スプラトゥーン企画の新規作成' }}</h2>
+
+    <div *ngIf="isLoading" class="loading-spinner"></div>
+    <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+
+    <form *ngIf="!isLoading" [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="tournamentName" class="form-label">企画名</label>
-        <input type="text" id="tournamentName" class="form-control" formControlName="tournamentName">
+        <label for="tournamentName" class="form-label">企画名:</label>
+        <input type="text" id="tournamentName" class="form-control" formControlName="tournamentName" required>
       </div>
       <div class="form-group">
-        <label for="eventDate" class="form-label">開催日</label>
-        <input type="date" id="eventDate" class="form-control" formControlName="eventDate">
+        <label for="eventDate" class="form-label">開催日:</label>
+        <input type="date" id="eventDate" class="form-control" formControlName="eventDate" required>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label for="startTime" class="form-label">開始時刻</label>
-          <input type="time" id="startTime" class="form-control" formControlName="startTime">
+          <label for="startTime" class="form-label">開始時刻:</label>
+          <input type="time" id="startTime" class="form-control" formControlName="startTime" required>
         </div>
         <div class="form-group">
-          <label for="endTime" class="form-label">終了時刻</label>
-          <input type="time" id="endTime" class="form-control" formControlName="endTime">
+          <label for="endTime" class="form-label">終了時刻:</label>
+          <input type="time" id="endTime" class="form-control" formControlName="endTime" required>
         </div>
       </div>
       <div class="form-group">
-        <label for="gameMode" class="form-label">モード</label>
-        <select id="gameMode" class="form-control" formControlName="gameMode">
+        <label for="gameMode" class="form-label">モード:</label>
+        <select id="gameMode" class="form-control" formControlName="gameMode" required>
           <option>プライベートマッチ</option>
           <option>オープンマッチ</option>
           <option>ナワバリバトル</option>
@@ -31,11 +35,19 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="comment" class="form-label">コメント</label>
+        <label for="status" class="form-label">状態:</label>
+        <select id="status" class="form-control" formControlName="status">
+          <option [ngValue]="0">企画中</option>
+          <option [ngValue]="1">募集中</option>
+          <option [ngValue]="2">募集終了</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="comment" class="form-label">コメント:</label>
         <textarea id="comment" class="form-control" formControlName="comment" rows="3"></textarea>
       </div>
-      <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">更新</button>
-      <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">{{ isEditMode ? '更新' : '作成' }}</button>
     </form>
   </div>
 </div>
+

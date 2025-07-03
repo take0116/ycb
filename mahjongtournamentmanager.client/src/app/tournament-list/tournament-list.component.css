@@ -14,10 +14,10 @@
   }
 
   .page-header p {
-    font-size: 1.1rem;
-    color: var(--main-color);
-    opacity: 0.8;
-  }
+  font-size: 1.1rem;
+  color: var(--main-color);
+  opacity: 0.8;
+}
 
 .loading-spinner {
   display: flex;

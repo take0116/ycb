@@ -27,4 +27,16 @@ namespace MahjongTournamentManager.Server.Models
         public int Status { get; set; }
         public string? Comment { get; set; }
     }
+
+    public class SplatoonTournamentDto
+    {
+        public int Id { get; set; }
+        public string TournamentName { get; set; }
+        public string EventDate { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public string GameMode { get; set; }
+        public string? Comment { get; set; }
+        public int Status { get; set; }
+    }
 }
