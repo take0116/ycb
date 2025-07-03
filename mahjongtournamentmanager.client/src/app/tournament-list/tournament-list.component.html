@@ -15,19 +15,26 @@
   </div>
 
   <div *ngIf="!isLoading && tournaments.length > 0" class="tournament-grid">
-    <div class="card tournament-card" *ngFor="let tournament of tournaments" [routerLink]="tournament.gameTitle === '雀魂' ? ['/events', tournament.id] : ['/splatoon-event', tournament.id]" data-scroll>
-      <div class="card-header">
-        <span class="game-title">{{ tournament.gameTitle }}</span>
-        <span class="status-badge status-{{tournament.status}}">
-          {{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}
-        </span>
-      </div>
-      <h3 class="card-title">{{ tournament.tournamentName }}</h3>
-      <p class="card-description">{{ tournament.description }}</p>
-      <div class="card-footer">
-        <span *ngIf="tournament.gameTitle === '雀魂'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}～</span>
-        <span *ngIf="tournament.gameTitle === 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
-        <span *ngIf="tournament.gameTitle !== '雀魂' && tournament.gameTitle !== 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
+    <div class="card tournament-card" 
+         *ngFor="let tournament of tournaments" 
+         [routerLink]="tournament.gameTitle === '雀魂' ? ['/events', tournament.id] : ['/splatoon-event', tournament.id]" 
+         [class.jantama]="tournament.gameTitle === '雀魂'"
+         [class.splatoon]="tournament.gameTitle === 'スプラトゥーン'"
+         data-scroll>
+      <div class="card-content">
+        <div class="card-header">
+          <span class="game-title">{{ tournament.gameTitle }}</span>
+          <span class="status-badge status-{{tournament.status}}">
+            {{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}
+          </span>
+        </div>
+        <h3 class="card-title">{{ tournament.tournamentName }}</h3>
+        <p class="card-description">{{ tournament.description }}</p>
+        <div class="card-footer">
+          <span *ngIf="tournament.gameTitle === '雀魂'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}～</span>
+          <span *ngIf="tournament.gameTitle === 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
+          <span *ngIf="tournament.gameTitle !== '雀魂' && tournament.gameTitle !== 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
+        </div>
       </div>
     </div>
   </div>
