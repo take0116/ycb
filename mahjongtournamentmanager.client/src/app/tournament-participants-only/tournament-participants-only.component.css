@@ -177,7 +177,7 @@
 .participants-table th,
 .participants-table td {
   padding: var(--space-2);
-  text-align: left;
+  text-align: center;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }

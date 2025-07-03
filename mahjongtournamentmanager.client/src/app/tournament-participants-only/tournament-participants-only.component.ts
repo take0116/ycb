@@ -30,11 +30,13 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
   isParticipantsVisible: boolean = false;
   isMatchTablesVisible: boolean = false;
   isResultFormVisible: boolean = false;
+  isPlayerStatsVisible: boolean = false;
   
   isCoordinatorVisible = false;
   selectedRoundInfo: { matchId: number, round: string, schedulingStartDate: string } | null = null;
   selectedMatchPlayers: { id: string, name: string }[] = [];
   isAdmin: boolean = false;
+  playerStats: any[] = [];
 
   // Team Formation Properties
   unassignedParticipants: any[] = [];
@@ -187,6 +189,49 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
       });
     });
     this.groupedMatchTables = Object.values(tables);
+    this.calculatePlayerStats();
+  }
+
+  calculatePlayerStats(): void {
+    const stats: { [userId: string]: { name: string, totalScore: number, matchCount: number, scores: number[] } } = {};
+
+    // Initialize stats for all participants
+    this.participants.forEach(p => {
+      stats[p.user.id] = {
+        name: p.user.userName,
+        totalScore: 0,
+        matchCount: 0,
+        scores: []
+      };
+    });
+
+    // Aggregate scores from all matches
+    this.groupedMatchTables.forEach(table => {
+      table.data.slice(1).forEach(row => {
+        const scoresInMatch = this.matchScores[row.matchId];
+        if (scoresInMatch) {
+          row.players.forEach((player: any) => {
+            const score = scoresInMatch[player.id];
+            if (score !== null && score !== undefined) {
+              if (stats[player.id]) {
+                stats[player.id].totalScore += score;
+                stats[player.id].matchCount++;
+                stats[player.id].scores.push(score);
+              }
+            }
+          });
+        }
+      });
+    });
+
+    this.playerStats = Object.values(stats)
+      .map(s => ({
+        ...s,
+        averageScore: s.matchCount > 0 ? (s.totalScore / s.matchCount).toFixed(2) : 0,
+        maxScore: s.matchCount > 0 ? Math.max(...s.scores) : 0,
+        minScore: s.matchCount > 0 ? Math.min(...s.scores) : 0
+      }))
+      .sort((a, b) => b.totalScore - a.totalScore);
   }
 
   isUserInMatch(row: any): boolean {
@@ -626,6 +671,7 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     this.http.post(`${this.apiUrl}/matches/save-result`, payload).subscribe({
       next: () => {
         this.message = `対戦ID ${matchId} の結果を保存しました。`;
+        this.calculatePlayerStats(); // Recalculate stats after saving a result
       },
       error: (err) => {
         console.error(err);
