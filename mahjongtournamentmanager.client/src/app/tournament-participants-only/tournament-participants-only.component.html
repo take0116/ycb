@@ -158,6 +158,42 @@
     </div>
   </div>
 
+  <!-- Player Stats Section -->
+  <div *ngIf="isTableSaved && playerStats.length > 0" class="card">
+    <div class="card-header" (click)="isPlayerStatsVisible = !isPlayerStatsVisible">
+      <h2>個人成績</h2>
+      <span class="toggle-icon" [style.transform]="isPlayerStatsVisible ? 'rotate(180deg)' : ''">▼</span>
+    </div>
+    <div *ngIf="isPlayerStatsVisible" class="card-content">
+      <div class="table-responsive">
+        <table class="participants-table">
+          <thead>
+            <tr>
+              <th>順位</th>
+              <th>名前</th>
+              <th>合計スコア</th>
+              <th>試合数</th>
+              <th>平均スコア</th>
+              <th>最高スコア</th>
+              <th>最低スコア</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let stat of playerStats; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ stat.name }}</td>
+              <td>{{ stat.totalScore }}</td>
+              <td>{{ stat.matchCount }}</td>
+              <td>{{ stat.averageScore }}</td>
+              <td>{{ stat.maxScore }}</td>
+              <td>{{ stat.minScore }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- Action Buttons -->
   <div class="action-buttons" *ngIf="isAdmin">
     <button *ngIf="isTableSaved" (click)="unlockMatchTable()" class="btn btn-danger">対戦表を削除</button>
