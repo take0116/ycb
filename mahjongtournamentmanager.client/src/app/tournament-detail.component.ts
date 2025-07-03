@@ -116,10 +116,10 @@ export class TournamentDetailComponent implements OnInit {
   }
 
   share(): void {
+    const shareText = `${this.tournament.tournamentName}\n${window.location.href}`;
     const shareData = {
       title: this.tournament.tournamentName,
-      text: `麻雀大会「${this.tournament.tournamentName}」に参加しよう！`,
-      url: window.location.href
+      text: shareText,
     };
 
     if (navigator.share) {
@@ -127,8 +127,8 @@ export class TournamentDetailComponent implements OnInit {
         .then(() => console.log('Successfully shared'))
         .catch((error) => console.error('Error sharing', error));
     } else {
-      navigator.clipboard.writeText(shareData.url)
-        .then(() => alert('大会URLをクリップボードにコピーしました。'))
+      navigator.clipboard.writeText(shareText)
+        .then(() => alert('大会情報をクリップボードにコピーしました。'))
         .catch(err => console.error('Could not copy text: ', err));
     }
   }
