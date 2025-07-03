@@ -126,7 +126,7 @@
   padding: 4px var(--space-1);
   border-radius: var(--radius-sm);
   color: var(--main-color);
-  opacity: 0.9;
+  opacity: 0.5;
 }
 
 .card-title {
@@ -136,6 +136,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding-left: var(--space-2);
 }
 
 .card-description {
@@ -149,6 +150,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  padding-left: var(--space-2);
 }
 
 .card-footer {
