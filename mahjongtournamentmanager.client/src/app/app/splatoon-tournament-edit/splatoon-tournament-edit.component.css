@@ -7,17 +7,21 @@
 .form-container {
   max-width: 650px;
   margin: 0 auto;
+  padding: var(--space-4);
 }
 
 .back-button {
   display: inline-block;
   margin-bottom: var(--space-3);
   cursor: pointer;
+  color: var(--main-color);
+  text-decoration: none;
 }
 
 .form-row {
   display: flex;
   gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 
 .form-row .form-group {
@@ -37,5 +41,9 @@
   .form-row {
     flex-direction: column;
     gap: 0;
+    margin-bottom: 0;
+  }
+  .form-row .form-group {
+    margin-bottom: var(--space-3);
   }
 }

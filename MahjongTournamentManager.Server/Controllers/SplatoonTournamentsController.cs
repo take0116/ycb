@@ -40,7 +40,7 @@ namespace MahjongTournamentManager.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<SplatoonTournament>> GetSplatoonTournament(int id)
+        public async Task<ActionResult<SplatoonTournamentDto>> GetSplatoonTournament(int id)
         {
             var tournament = await _context.SplatoonTournaments.FindAsync(id);
 
@@ -49,7 +49,19 @@ namespace MahjongTournamentManager.Server.Controllers
                 return NotFound();
             }
 
-            return tournament;
+            var tournamentDto = new SplatoonTournamentDto
+            {
+                Id = tournament.Id,
+                TournamentName = tournament.TournamentName,
+                EventDate = tournament.EventDate.ToString("yyyy-MM-dd"),
+                StartTime = tournament.StartTime.ToString("HH:mm"),
+                EndTime = tournament.EndTime.ToString("HH:mm"),
+                GameMode = tournament.GameMode,
+                Comment = tournament.Comment,
+                Status = tournament.Status
+            };
+
+            return tournamentDto;
         }
 
         [HttpDelete("{id}")]

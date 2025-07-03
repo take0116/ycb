@@ -9,11 +9,11 @@
   margin-bottom: var(--space-5);
 }
 
-.page-header h1 {
-  margin-bottom: var(--space-1);
-}
+  .page-header h1 {
+    margin-bottom: var(--space-1);
+  }
 
-.page-header p {
+  .page-header p {
   font-size: 1.1rem;
   color: var(--main-color);
   opacity: 0.8;
@@ -36,7 +36,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .no-tournaments, .error-message {
@@ -58,14 +60,57 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: transform var(--transition-duration) var(--transition-timing),
-              box-shadow var(--transition-duration) var(--transition-timing);
+  transition: transform var(--transition-duration) var(--transition-timing), box-shadow var(--transition-duration) var(--transition-timing);
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-3);
+  background-color: var(--surface-color);
+  border-radius: var(--radius-lg);
 }
 
-.tournament-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  .tournament-card.jantama::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(/assets/icons/mahjong_character.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 80%;
+  opacity: 0.2; /* 背景画像の透明度を調整 */
+  z-index: 1;
 }
+
+.tournament-card.splatoon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(/assets/icons/splatoon_charactoer.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 80%;
+  opacity: 0.2; /* 背景画像の透明度を調整 */
+  z-index: 1;
+}
+
+.tournament-card .card-content {
+  position: relative;
+  z-index: 2;
+}
+
+.tournament-card.jantama .card-content,
+.tournament-card.splatoon .card-content {
+}
+
+  .tournament-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
 
 .card-header {
   display: flex;
@@ -81,7 +126,7 @@
   padding: 4px var(--space-1);
   border-radius: var(--radius-sm);
   color: var(--main-color);
-  opacity: 0.9;
+  opacity: 0.5;
 }
 
 .card-title {
@@ -91,6 +136,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding-left: var(--space-2);
 }
 
 .card-description {
@@ -102,8 +148,9 @@
   /* Clamp description to 3 lines */
   display: -webkit-box;
   -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;  
+  -webkit-box-orient: vertical;
   overflow: hidden;
+  padding-left: var(--space-2);
 }
 
 .card-footer {
@@ -123,7 +170,20 @@
   color: var(--text-color-light);
 }
 
-.status-0 { background-color: #6c757d; } /* 企画中 */
-.status-1 { background-color: var(--accent-color); } /* 募集中 */
-.status-2 { background-color: #ffc107; color: var(--text-color); } /* 募集終了 */
-.status-3 { background-color: var(--main-color); } /* 終了 */
+.status-0 {
+  background-color: #6c757d;
+}
+/* 企画中 */
+.status-1 {
+  background-color: var(--accent-color);
+}
+/* 募集中 */
+.status-2 {
+  background-color: #ffc107;
+  color: var(--text-color);
+}
+/* 募集終了 */
+.status-3 {
+  background-color: var(--main-color);
+}
+/* 終了 */

@@ -10,6 +10,7 @@ import { TournamentListComponent } from './tournament-list/tournament-list.compo
 import { AuthenticatedLayoutComponent } from './authenticated-layout/authenticated-layout.component';
 import { TournamentEditComponent } from './tournament-edit/tournament-edit.component';
 import { SplatoonTournamentDetailComponent } from './app/splatoon-tournament-detail/splatoon-tournament-detail.component';
+import { SplatoonTournamentEditComponent } from './app/splatoon-tournament-edit/splatoon-tournament-edit.component';
 import { TournamentParticipantsOnlyComponent } from './tournament-participants-only/tournament-participants-only.component';
 
 export const routes: Routes = [
@@ -26,8 +27,12 @@ export const routes: Routes = [
       { path: 'event-entry/:id', component: TournamentEntryComponent },
       { path: 'create-event', component: TournamentCreationComponent, data: { roles: ['Admin'] } },
       { path: 'event-edit/:id', component: TournamentEditComponent, data: { roles: ['Admin'] } },
+      
+      // Splatoon Routes
+      { path: 'splatoon-event/create', component: SplatoonTournamentEditComponent, data: { roles: ['Admin'] } },
       { path: 'splatoon-event/:id', component: SplatoonTournamentDetailComponent },
-      { path: 'splatoon-event-edit/:id', component: TournamentEditComponent, data: { roles: ['Admin'] } },
+      { path: 'splatoon-event-edit/:id', component: SplatoonTournamentEditComponent, data: { roles: ['Admin'] } },
+
       { path: 'tournament-participants-only/:id', component: TournamentParticipantsOnlyComponent, canActivate: [AuthGuard] },
       { path: 'event-list', component: TournamentListComponent }
     ]
