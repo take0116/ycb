@@ -2,62 +2,121 @@
   <div class="card form-container">
     <a (click)="goBack()" class="back-button">＜ 戻る</a>
     <h2>企画情報編集</h2>
-    <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="tournamentName" class="form-label">企画名</label>
-        <input type="text" id="tournamentName" class="form-control" formControlName="tournamentName">
-      </div>
-      <div class="form-group">
-        <label for="startDate" class="form-label">開始日</label>
-        <input type="date" id="startDate" class="form-control" formControlName="startDate">
-      </div>
-      <div class="form-group">
-        <label for="endDate" class="form-label">終了日</label>
-        <input type="date" id="endDate" class="form-control" formControlName="endDate">
-      </div>
 
-      <h3>雀魂友人戦設定</h3>
-      <div class="form-row">
+    <!-- Jantama Form -->
+    <div *ngIf="gameTitle === '雀魂'">
+      <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="gameType" class="form-label">対戦形式</label>
-          <select id="gameType" class="form-control" formControlName="gameType" (change)="onGameTypeSelectionChange()">
-            <option>ヨンマ</option>
-            <option>サンマ</option>
+          <label for="tournamentName" class="form-label">大会名:</label>
+          <input type="text" id="tournamentName" class="form-control" formControlName="tournamentName" required>
+        </div>
+        <div class="form-group">
+          <label for="startDate" class="form-label">開始日:</label>
+          <input type="date" id="startDate" class="form-control" formControlName="startDate" required>
+        </div>
+        <div class="form-group">
+          <label for="endDate" class="form-label">終了日</label>
+          <input type="date" id="endDate" class="form-control" formControlName="endDate" required>
+        </div>
+
+        <h3>雀魂友人戦設定</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="gameType" class="form-label">対戦形式:</label>
+            <select id="gameType" class="form-control" formControlName="gameType" (change)="onGameTypeSelectionChange()">
+              <option>ヨンマ</option>
+              <option>サンマ</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="thinkTime" class="form-label">長考時間:</label>
+            <select id="thinkTime" class="form-control" formControlName="thinkTime">
+              <option>3+5</option>
+              <option>5+10</option>
+              <option>5+20</option>
+              <option>60+0</option>
+              <option>300+0</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="allowFlying" formControlName="allowFlying">
+            <label for="allowFlying">飛びあり</label>
+          </div>
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="redDora" formControlName="redDora">
+            <label for="redDora">赤ドラあり</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="startingScore" class="form-label">配給原点:</label>
+          <select id="startingScore" class="form-control" formControlName="startingScore" required>
+            <option *ngFor="let score of startingScoreOptions" [ngValue]="score">{{ score }}点</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="thinkTime" class="form-label">長考時間</label>
-          <select id="thinkTime" class="form-control" formControlName="thinkTime">
-            <option>3+5</option>
-            <option>5+10</option>
-            <option>5+20</option>
-            <option>60+0</option>
-            <option>300+0</option>
+          <label for="status" class="form-label">大会状態:</label>
+          <select id="status" class="form-control" formControlName="status">
+            <option [ngValue]="0">企画中</option>
+            <option [ngValue]="1">募集中</option>
+            <option [ngValue]="2">募集終了</option>
           </select>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group checkbox-group">
-          <input type="checkbox" id="allowFlying" formControlName="allowFlying">
-          <label for="allowFlying">飛びあり</label>
+        <div class="form-group">
+          <label for="description" class="form-label">コメント:</label>
+          <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
         </div>
-        <div class="form-group checkbox-group">
-          <input type="checkbox" id="redDora" formControlName="redDora">
-          <label for="redDora">赤ドラあり</label>
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">更新</button>
+      </form>
+    </div>
+
+    <!-- Splatoon Form -->
+    <div *ngIf="gameTitle === 'スプラトゥーン'">
+      <form [formGroup]="splatoonTournamentForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="splatoonTournamentName" class="form-label">企画名:</label>
+          <input type="text" id="splatoonTournamentName" class="form-control" formControlName="tournamentName" required>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="startingScore" class="form-label">配給原点</label>
-        <select id="startingScore" class="form-control" formControlName="startingScore">
-          <option *ngFor="let score of startingScoreOptions" [ngValue]="score">{{ score }}点</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="description" class="form-label">コメント</label>
-        <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">更新</button>
-      <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
-    </form>
+        <div class="form-group">
+          <label for="splatoonEventDate" class="form-label">開催日:</label>
+          <input type="date" id="splatoonEventDate" class="form-control" formControlName="eventDate" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="splatoonStartTime" class="form-label">開始時刻:</label>
+            <input type="time" id="splatoonStartTime" class="form-control" formControlName="startTime" required>
+          </div>
+          <div class="form-group">
+            <label for="splatoonEndTime" class="form-label">終了時刻:</label>
+            <input type="time" id="splatoonEndTime" class="form-control" formControlName="endTime" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="splatoonGameMode" class="form-label">モード:</label>
+          <select id="splatoonGameMode" class="form-control" formControlName="gameMode" required>
+            <option>プライベートマッチ</option>
+            <option>オープンマッチ</option>
+            <option>ナワバリバトル</option>
+            <option>サーモンラン</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="splatoonStatus" class="form-label">状態:</label>
+          <select id="splatoonStatus" class="form-control" formControlName="status">
+            <option [ngValue]="0">企画中</option>
+            <option [ngValue]="1">募集中</option>
+            <option [ngValue]="2">募集終了</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="splatoonComment" class="form-label">コメント:</label>
+          <textarea id="splatoonComment" class="form-control" formControlName="comment" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="splatoonTournamentForm.invalid">更新</button>
+      </form>
+    </div>
+
+    <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
   </div>
 </div>

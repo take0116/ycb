@@ -44,6 +44,7 @@ export class TournamentCreationComponent implements OnInit {
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
       gameMode: ['プライベートマッチ', Validators.required],
+      status: [1, Validators.required],
       comment: ['']
     });
   }

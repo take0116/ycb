@@ -46,7 +46,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasIndex("TournamentSettingsId");
 
-                    b.ToTable("MahjongMatches");
+                    b.ToTable("MahjongMatches", (string)null);
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.MahjongMatchPlayer", b =>
@@ -76,7 +76,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("MahjongMatchPlayers");
+                    b.ToTable("MahjongMatchPlayers", (string)null);
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.ScheduleAvailability", b =>
@@ -106,7 +106,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ScheduleAvailabilities");
+                    b.ToTable("ScheduleAvailabilities", (string)null);
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.SplatoonParticipant", b =>
@@ -133,7 +133,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SplatoonParticipants");
+                    b.ToTable("SplatoonParticipants", (string)null);
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.SplatoonTournament", b =>
@@ -178,7 +178,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SplatoonTournaments");
+                    b.ToTable("SplatoonTournaments", (string)null);
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentParticipant", b =>
@@ -208,7 +208,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TournamentParticipants");
+                    b.ToTable("TournamentParticipants", (string)null);
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentSettings", b =>
@@ -260,7 +260,7 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TournamentSettings");
+                    b.ToTable("TournamentSettings", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

@@ -8,6 +8,12 @@
       </p>
     </header>
 
+    <div class="action-section">
+      <button *ngIf="isParticipant" (click)="viewParticipantsOnly()" class="btn btn-secondary">
+        参加者専用ページへ
+      </button>
+    </div>
+
     <div class="main-content">
       <div class="details-grid">
         <div class="card">
@@ -37,9 +43,9 @@
         <button *ngIf="!isParticipant && tournament.status === 1" (click)="joinTournament()" class="btn btn-primary">
           このイベントに参加する
         </button>
-        <button *ngIf="isParticipant" (click)="viewParticipantsOnly()" class="btn btn-secondary">
+        <!--<button *ngIf="isParticipant" (click)="viewParticipantsOnly()" class="btn btn-secondary">
           参加者専用ページへ
-        </button>
+        </button>-->
         <div class="admin-actions" *ngIf="authService.hasRole('Admin')">
           <button (click)="editTournament()" class="btn btn-secondary">編集</button>
           <button (click)="deleteTournament()" class="btn btn-danger">削除</button>

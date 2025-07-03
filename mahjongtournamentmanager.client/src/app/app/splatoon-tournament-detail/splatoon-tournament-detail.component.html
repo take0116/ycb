@@ -28,7 +28,7 @@
       </div>
 
       <div class="action-section">
-        <button *ngIf="!isParticipant && authService.currentUserValue" (click)="joinTournament()" class="btn btn-primary">
+        <button *ngIf="!isParticipant && authService.currentUserValue && tournament.status === 1" (click)="joinTournament()" class="btn btn-primary">
           このイベントに参加する
         </button>
         <div class="admin-actions" *ngIf="authService.hasRole('Admin')">
