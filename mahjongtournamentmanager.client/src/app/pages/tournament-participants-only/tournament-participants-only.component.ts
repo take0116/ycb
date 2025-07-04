@@ -225,13 +225,14 @@ export class TournamentParticipantsOnlyComponent implements OnInit {
     });
 
     this.playerStats = Object.values(stats)
+      .sort((a, b) => b.totalScore - a.totalScore)
       .map(s => ({
         ...s,
-        averageScore: s.matchCount > 0 ? (s.totalScore / s.matchCount).toFixed(2) : 0,
+        totalScore: s.totalScore.toFixed(1),
+        averageScore: s.matchCount > 0 ? (s.totalScore / s.matchCount).toFixed(1) : 0,
         maxScore: s.matchCount > 0 ? Math.max(...s.scores) : 0,
         minScore: s.matchCount > 0 ? Math.min(...s.scores) : 0
-      }))
-      .sort((a, b) => b.totalScore - a.totalScore);
+      }));
   }
 
   isUserInMatch(row: any): boolean {
