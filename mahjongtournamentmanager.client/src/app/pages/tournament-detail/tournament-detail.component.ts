@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule, DatePipe } from '@angular/common';
-import { AuthService } from './auth.service';
-import { Tournament } from './tournament';
-import { environment } from '../environments/environment';
+import { AuthService } from '../../services/auth.service';
+import { Tournament } from '../../models/tournament';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-tournament-detail',

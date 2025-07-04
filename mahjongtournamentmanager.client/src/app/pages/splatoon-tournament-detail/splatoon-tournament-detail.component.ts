@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule, DatePipe } from '@angular/common';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../services/auth.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
