@@ -58,7 +58,8 @@ namespace MahjongTournamentManager.Server.Controllers
                 EndTime = tournament.EndTime.ToString("HH:mm"),
                 GameMode = tournament.GameMode,
                 Comment = tournament.Comment,
-                Status = tournament.Status
+                Status = tournament.Status,
+                MaxParticipants = tournament.MaxParticipants
             };
 
             return tournamentDto;
@@ -90,10 +91,18 @@ namespace MahjongTournamentManager.Server.Controllers
                 return Unauthorized();
             }
 
-            var tournamentExists = await _context.SplatoonTournaments.AnyAsync(t => t.Id == id);
-            if (!tournamentExists)
+            var tournament = await _context.SplatoonTournaments.FindAsync(id);
+            if (tournament == null)
             {
                 return NotFound("Tournament not found.");
+            }
+
+            var participantCount = await _context.SplatoonParticipants
+                .CountAsync(p => p.SplatoonTournamentId == id);
+
+            if (tournament.MaxParticipants.HasValue && participantCount >= tournament.MaxParticipants.Value)
+            {
+                return BadRequest("This tournament is full.");
             }
 
             var alreadyJoined = await _context.SplatoonParticipants
@@ -112,6 +121,14 @@ namespace MahjongTournamentManager.Server.Controllers
 
             _context.SplatoonParticipants.Add(participant);
             await _context.SaveChangesAsync();
+
+            // Check if the tournament is now full and update status
+            var newParticipantCount = participantCount + 1;
+            if (tournament.MaxParticipants.HasValue && newParticipantCount >= tournament.MaxParticipants.Value)
+            {
+                tournament.Status = 2; // 募集終了
+                await _context.SaveChangesAsync();
+            }
 
             return Ok("Joined tournament successfully.");
         }
@@ -194,6 +211,7 @@ namespace MahjongTournamentManager.Server.Controllers
             existingTournament.GameMode = splatoonTournament.GameMode;
             existingTournament.Comment = splatoonTournament.Comment;
             existingTournament.Status = splatoonTournament.Status;
+            existingTournament.MaxParticipants = splatoonTournament.MaxParticipants;
 
             try
             {

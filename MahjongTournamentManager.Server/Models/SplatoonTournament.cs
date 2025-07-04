@@ -26,6 +26,7 @@ namespace MahjongTournamentManager.Server.Models
         public string? GearRestriction { get; set; }
         public int Status { get; set; }
         public string? Comment { get; set; }
+        public int? MaxParticipants { get; set; }
     }
 
     public class SplatoonTournamentDto
@@ -38,5 +39,6 @@ namespace MahjongTournamentManager.Server.Models
         public string GameMode { get; set; }
         public string? Comment { get; set; }
         public int Status { get; set; }
+        public int? MaxParticipants { get; set; }
     }
 }

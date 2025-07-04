@@ -36,7 +36,8 @@ export class SplatoonTournamentEditComponent implements OnInit {
       endTime: ['', Validators.required],
       gameMode: ['', Validators.required],
       comment: [''],
-      status: [1] // Default to 'Recruiting'
+      status: [1], // Default to 'Recruiting'
+      maxParticipants: [null, [Validators.min(1)]]
     });
   }
 
