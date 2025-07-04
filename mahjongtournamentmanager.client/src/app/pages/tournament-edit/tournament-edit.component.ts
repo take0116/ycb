@@ -3,7 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 interface Tournament {
   id: string;
