@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
+using MahjongTournamentManager.Server.Models;
 
 namespace MahjongTournamentManager.Server.Controllers
 {
@@ -26,11 +27,32 @@ namespace MahjongTournamentManager.Server.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<SplatoonTournament>> PostSplatoonTournament(SplatoonTournament splatoonTournament)
+        public async Task<ActionResult<SplatoonTournament>> PostSplatoonTournament(SplatoonTournamentCreationRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            var splatoonTournament = new SplatoonTournament
+            {
+                TournamentName = request.TournamentName,
+                EventDate = request.EventDate,
+                StartTime = request.StartTime,
+                EndTime = request.EndTime,
+                GameMode = request.GameMode,
+                Comment = request.Comment,
+                Status = request.Status,
+                MaxParticipants = request.MaxParticipants,
+                IsPrivate = request.IsPrivate
+            };
+
+            if (request.IsPrivate && request.InvitedUsers != null)
+            {
+                foreach (var userId in request.InvitedUsers)
+                {
+                    splatoonTournament.InvitedUsers.Add(new SplatoonTournamentInvitedUser { UserId = userId });
+                }
             }
 
             _context.SplatoonTournaments.Add(splatoonTournament);

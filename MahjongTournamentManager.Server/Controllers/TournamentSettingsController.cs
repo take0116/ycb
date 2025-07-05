@@ -29,7 +29,19 @@ namespace MahjongTournamentManager.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TournamentListItem>>> GetTournaments()
         {
-            var mahjongTournaments = await _context.TournamentSettings
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
+
+            var mahjongQuery = _context.TournamentSettings.AsQueryable();
+            var splatoonQuery = _context.SplatoonTournaments.AsQueryable();
+
+            if (!isAdmin)
+            {
+                mahjongQuery = mahjongQuery.Where(t => !t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId));
+                splatoonQuery = splatoonQuery.Where(t => !t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId));
+            }
+
+            var mahjongTournaments = await mahjongQuery
                 .Where(ts => ts.Status != TournamentStatus.Finished)
                 .Select(t => new TournamentListItem
                 {
@@ -43,7 +55,7 @@ namespace MahjongTournamentManager.Server.Controllers
                 })
                 .ToListAsync();
 
-            var splatoonTournaments = await _context.SplatoonTournaments
+            var splatoonTournaments = await splatoonQuery
                 .Where(st => st.Status != 3) // Assuming 3 is "Finished"
                 .Select(t => new TournamentListItem
                 {
@@ -321,12 +333,35 @@ namespace MahjongTournamentManager.Server.Controllers
 
         // POST: api/TournamentSettings
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<TournamentSettings>> PostTournamentSettings(TournamentSettings tournamentSettings)
+        public async Task<ActionResult<TournamentSettings>> PostTournamentSettings(MahjongTournamentCreationRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            var tournamentSettings = new TournamentSettings
+            {
+                TournamentName = request.TournamentName,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate,
+                PlayerCount = request.PlayerCount,
+                GameType = request.GameType,
+                ThinkTime = request.ThinkTime,
+                AllowFlying = request.AllowFlying,
+                RedDora = request.RedDora,
+                StartingScore = request.StartingScore,
+                Description = request.Description,
+                Status = (TournamentStatus)request.Status,
+                IsPrivate = request.IsPrivate
+            };
+
+            if (request.IsPrivate && request.InvitedUsers != null)
+            {
+                foreach (var userId in request.InvitedUsers)
+                {
+                    tournamentSettings.InvitedUsers.Add(new TournamentInvitedUser { UserId = userId });
+                }
             }
 
             _context.TournamentSettings.Add(tournamentSettings);

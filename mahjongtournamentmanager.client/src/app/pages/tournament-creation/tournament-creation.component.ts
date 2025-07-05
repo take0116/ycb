@@ -15,7 +15,7 @@ import { UserService } from '../../services/user.service';
   imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class TournamentCreationComponent implements OnInit {
-  private mahjongApiUrl = `${environment.apiUrl}/api/Tournaments`;
+  private mahjongApiUrl = `${environment.apiUrl}/api/TournamentSettings`;
   private splatoonApiUrl = `${environment.apiUrl}/api/SplatoonTournaments`;
   tournamentForm: FormGroup;
   splatoonTournamentForm: FormGroup;
