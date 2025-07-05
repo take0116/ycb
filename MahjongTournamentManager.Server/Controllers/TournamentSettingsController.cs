@@ -82,6 +82,7 @@ namespace MahjongTournamentManager.Server.Controllers
         public async Task<ActionResult<TournamentSettings>> GetTournamentSettings(int id)
         {
             var tournamentSettings = await _context.TournamentSettings
+                .Include(t => t.InvitedUsers)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Id == id);
 
@@ -373,30 +374,43 @@ namespace MahjongTournamentManager.Server.Controllers
         // PUT: api/TournamentSettings/5
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutTournamentSettings(int id, TournamentSettings tournamentSettings)
+        public async Task<IActionResult> PutTournamentSettings(int id, TournamentSettingsUpdateDto tournamentSettingsDto)
         {
-            if (id != tournamentSettings.Id)
+            if (id != tournamentSettingsDto.Id)
             {
                 return BadRequest();
             }
 
-            var existingTournament = await _context.TournamentSettings.FindAsync(id);
+            var existingTournament = await _context.TournamentSettings
+                .Include(t => t.InvitedUsers)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (existingTournament == null)
             {
                 return NotFound();
             }
 
-            existingTournament.TournamentName = tournamentSettings.TournamentName;
-            existingTournament.StartDate = tournamentSettings.StartDate;
-            existingTournament.EndDate = tournamentSettings.EndDate;
-            existingTournament.PlayerCount = tournamentSettings.PlayerCount;
-            existingTournament.GameType = tournamentSettings.GameType;
-            existingTournament.ThinkTime = tournamentSettings.ThinkTime;
-            existingTournament.AllowFlying = tournamentSettings.AllowFlying;
-            existingTournament.RedDora = tournamentSettings.RedDora;
-            existingTournament.StartingScore = tournamentSettings.StartingScore;
-            existingTournament.Description = tournamentSettings.Description;
-            existingTournament.Status = tournamentSettings.Status;
+            existingTournament.TournamentName = tournamentSettingsDto.TournamentName;
+            existingTournament.StartDate = tournamentSettingsDto.StartDate;
+            existingTournament.EndDate = tournamentSettingsDto.EndDate;
+            existingTournament.PlayerCount = tournamentSettingsDto.PlayerCount;
+            existingTournament.GameType = tournamentSettingsDto.GameType;
+            existingTournament.ThinkTime = tournamentSettingsDto.ThinkTime;
+            existingTournament.AllowFlying = tournamentSettingsDto.AllowFlying;
+            existingTournament.RedDora = tournamentSettingsDto.RedDora;
+            existingTournament.StartingScore = tournamentSettingsDto.StartingScore;
+            existingTournament.Description = tournamentSettingsDto.Description;
+            existingTournament.Status = tournamentSettingsDto.Status;
+            existingTournament.IsPrivate = tournamentSettingsDto.IsPrivate;
+
+            existingTournament.InvitedUsers.Clear();
+            if (tournamentSettingsDto.IsPrivate && tournamentSettingsDto.InvitedUsers != null)
+            {
+                foreach (var invitedUser in tournamentSettingsDto.InvitedUsers)
+                {
+                    existingTournament.InvitedUsers.Add(new TournamentInvitedUser { UserId = invitedUser.UserId });
+                }
+            }
 
             try
             {

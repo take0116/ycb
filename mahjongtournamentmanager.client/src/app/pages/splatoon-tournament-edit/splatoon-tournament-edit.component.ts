@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-splatoon-tournament-edit',
@@ -20,13 +21,15 @@ export class SplatoonTournamentEditComponent implements OnInit {
   isEditMode = false;
   isLoading = true;
   errorMessage = '';
+  users: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router,
     private fb: FormBuilder,
-    private location: Location
+    private location: Location,
+    private userService: UserService
   ) {
     this.tournamentForm = this.fb.group({
       id: [0],
@@ -37,11 +40,14 @@ export class SplatoonTournamentEditComponent implements OnInit {
       gameMode: ['', Validators.required],
       comment: [''],
       status: [1], // Default to 'Recruiting'
-      maxParticipants: [null, [Validators.min(1)]]
+      maxParticipants: [null, [Validators.min(1)]],
+      isPrivate: [false],
+      invitedUserIds: this.fb.array([])
     });
   }
 
   ngOnInit(): void {
+    this.loadUsers();
     this.tournamentId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.tournamentId;
 
@@ -49,6 +55,10 @@ export class SplatoonTournamentEditComponent implements OnInit {
       this.http.get<any>(`${this.apiUrl}/${this.tournamentId}`).subscribe({
         next: tournament => {
           this.tournamentForm.patchValue(tournament);
+          const invitedUserIds = this.tournamentForm.get('invitedUserIds') as FormArray;
+          tournament.invitedUserIds.forEach((id: string) => {
+            invitedUserIds.push(this.fb.control(id));
+          });
           this.isLoading = false;
         },
         error: err => {
@@ -60,6 +70,36 @@ export class SplatoonTournamentEditComponent implements OnInit {
     } else {
       this.isLoading = false;
     }
+  }
+
+  loadUsers(): void {
+    this.userService.getUsers().subscribe({
+      next: (users: any[]) => {
+        this.users = users;
+      },
+      error: (err: any) => {
+        console.error('Failed to load users', err);
+        this.errorMessage = 'ユーザーリストの読み込みに失敗しました。';
+      }
+    });
+  }
+
+  onUserSelectionChange(event: any): void {
+    const invitedUserIds = this.tournamentForm.get('invitedUserIds') as FormArray;
+
+    if (event.target.checked) {
+      invitedUserIds.push(this.fb.control(event.target.value));
+    } else {
+      const index = invitedUserIds.controls.findIndex(x => x.value === event.target.value);
+      if (index !== -1) {
+        invitedUserIds.removeAt(index);
+      }
+    }
+  }
+
+  isUserInvited(userId: string): boolean {
+    const invitedUserIds = this.tournamentForm.get('invitedUserIds') as FormArray;
+    return invitedUserIds.value.includes(userId);
   }
 
   onSubmit(): void {

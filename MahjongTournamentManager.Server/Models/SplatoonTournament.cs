@@ -42,5 +42,7 @@ namespace MahjongTournamentManager.Server.Models
         public string? Comment { get; set; }
         public int Status { get; set; }
         public int? MaxParticipants { get; set; }
+        public bool IsPrivate { get; set; }
+        public List<string> InvitedUserIds { get; set; } = new List<string>();
     }
 }

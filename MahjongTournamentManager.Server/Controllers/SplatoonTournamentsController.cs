@@ -64,7 +64,9 @@ namespace MahjongTournamentManager.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SplatoonTournamentDto>> GetSplatoonTournament(int id)
         {
-            var tournament = await _context.SplatoonTournaments.FindAsync(id);
+            var tournament = await _context.SplatoonTournaments
+                .Include(t => t.InvitedUsers)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (tournament == null)
             {
@@ -81,7 +83,9 @@ namespace MahjongTournamentManager.Server.Controllers
                 GameMode = tournament.GameMode,
                 Comment = tournament.Comment,
                 Status = tournament.Status,
-                MaxParticipants = tournament.MaxParticipants
+                MaxParticipants = tournament.MaxParticipants,
+                IsPrivate = tournament.IsPrivate,
+                InvitedUserIds = tournament.InvitedUsers.Select(u => u.UserId).ToList()
             };
 
             return tournamentDto;
@@ -213,27 +217,40 @@ namespace MahjongTournamentManager.Server.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutSplatoonTournament(int id, SplatoonTournament splatoonTournament)
+        public async Task<IActionResult> PutSplatoonTournament(int id, SplatoonTournamentDto splatoonTournamentDto)
         {
-            if (id != splatoonTournament.Id)
+            if (id != splatoonTournamentDto.Id)
             {
                 return BadRequest();
             }
 
-            var existingTournament = await _context.SplatoonTournaments.FindAsync(id);
+            var existingTournament = await _context.SplatoonTournaments
+                .Include(t => t.InvitedUsers)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
             if (existingTournament == null)
             {
                 return NotFound();
             }
 
-            existingTournament.TournamentName = splatoonTournament.TournamentName;
-            existingTournament.EventDate = splatoonTournament.EventDate;
-            existingTournament.StartTime = splatoonTournament.StartTime;
-            existingTournament.EndTime = splatoonTournament.EndTime;
-            existingTournament.GameMode = splatoonTournament.GameMode;
-            existingTournament.Comment = splatoonTournament.Comment;
-            existingTournament.Status = splatoonTournament.Status;
-            existingTournament.MaxParticipants = splatoonTournament.MaxParticipants;
+            existingTournament.TournamentName = splatoonTournamentDto.TournamentName;
+            existingTournament.EventDate = DateOnly.Parse(splatoonTournamentDto.EventDate);
+            existingTournament.StartTime = TimeOnly.Parse(splatoonTournamentDto.StartTime);
+            existingTournament.EndTime = TimeOnly.Parse(splatoonTournamentDto.EndTime);
+            existingTournament.GameMode = splatoonTournamentDto.GameMode;
+            existingTournament.Comment = splatoonTournamentDto.Comment;
+            existingTournament.Status = splatoonTournamentDto.Status;
+            existingTournament.MaxParticipants = splatoonTournamentDto.MaxParticipants;
+            existingTournament.IsPrivate = splatoonTournamentDto.IsPrivate;
+
+            existingTournament.InvitedUsers.Clear();
+            if (splatoonTournamentDto.IsPrivate && splatoonTournamentDto.InvitedUserIds != null)
+            {
+                foreach (var userId in splatoonTournamentDto.InvitedUserIds)
+                {
+                    existingTournament.InvitedUsers.Add(new SplatoonTournamentInvitedUser { UserId = userId });
+                }
+            }
 
             try
             {
