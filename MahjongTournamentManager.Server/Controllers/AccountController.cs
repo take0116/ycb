@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace MahjongTournamentManager.Server.Controllers
 {
@@ -25,6 +26,14 @@ namespace MahjongTournamentManager.Server.Controllers
             _signInManager = signInManager;
             _roleManager = roleManager; // Assign it
             _configuration = configuration;
+        }
+
+        [HttpGet("users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            return Ok(users);
         }
 
         [HttpPost("register")]

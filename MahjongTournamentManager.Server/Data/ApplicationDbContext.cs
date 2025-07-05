@@ -13,11 +13,13 @@ namespace MahjongTournamentManager.Server.Data
         }
 
         public DbSet<TournamentSettings> TournamentSettings { get; set; }
-    public DbSet<SplatoonTournament> SplatoonTournaments { get; set; }
-    public DbSet<SplatoonParticipant> SplatoonParticipants { get; set; }
-    public DbSet<TournamentParticipant> TournamentParticipants { get; set; }
-    public DbSet<MahjongMatch> MahjongMatches { get; set; }
-    public DbSet<MahjongMatchPlayer> MahjongMatchPlayers { get; set; }
-    public DbSet<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+        public DbSet<SplatoonTournament> SplatoonTournaments { get; set; }
+        public DbSet<SplatoonParticipant> SplatoonParticipants { get; set; }
+        public DbSet<TournamentParticipant> TournamentParticipants { get; set; }
+        public DbSet<MahjongMatch> MahjongMatches { get; set; }
+        public DbSet<MahjongMatchPlayer> MahjongMatchPlayers { get; set; }
+        public DbSet<ScheduleAvailability> ScheduleAvailabilities { get; set; }
+        public DbSet<TournamentInvitedUser> TournamentInvitedUsers { get; set; }
+        public DbSet<SplatoonTournamentInvitedUser> SplatoonTournamentInvitedUsers { get; set; }
     }
 }

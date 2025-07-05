@@ -3,6 +3,7 @@ using System;
 using MahjongTournamentManager.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MahjongTournamentManager.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250705155859_AddIsPrivateAndInvitedUsersToSettings")]
+    partial class AddIsPrivateAndInvitedUsersToSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,6 +163,9 @@ namespace MahjongTournamentManager.Server.Migrations
                     b.Property<string>("GearRestriction")
                         .HasColumnType("text");
 
+                    b.Property<string>("InvitedUserIds")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsPrivate")
                         .HasColumnType("boolean");
 
@@ -187,7 +193,7 @@ namespace MahjongTournamentManager.Server.Migrations
                     b.ToTable("SplatoonTournaments");
                 });
 
-            modelBuilder.Entity("MahjongTournamentManager.Server.Models.SplatoonTournamentInvitedUser", b =>
+            modelBuilder.Entity("MahjongTournamentManager.Server.Models.Tournament", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -195,44 +201,25 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("SplatoonTournamentId")
-                        .HasColumnType("integer");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("InvitedUserIds")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("SplatoonTournamentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SplatoonTournamentInvitedUsers");
-                });
-
-            modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentInvitedUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("TournamentSettingsId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TournamentSettingsId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TournamentInvitedUsers");
+                    b.ToTable("Tournaments");
                 });
 
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentParticipant", b =>
@@ -284,6 +271,9 @@ namespace MahjongTournamentManager.Server.Migrations
 
                     b.Property<string>("GameType")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvitedUserIds")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsPrivate")
@@ -588,44 +578,6 @@ namespace MahjongTournamentManager.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MahjongTournamentManager.Server.Models.SplatoonTournamentInvitedUser", b =>
-                {
-                    b.HasOne("MahjongTournamentManager.Server.Models.SplatoonTournament", "SplatoonTournament")
-                        .WithMany("InvitedUsers")
-                        .HasForeignKey("SplatoonTournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SplatoonTournament");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentInvitedUser", b =>
-                {
-                    b.HasOne("MahjongTournamentManager.Server.Models.TournamentSettings", "TournamentSettings")
-                        .WithMany("InvitedUsers")
-                        .HasForeignKey("TournamentSettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TournamentSettings");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentParticipant", b =>
                 {
                     b.HasOne("MahjongTournamentManager.Server.Models.TournamentSettings", "TournamentSettings")
@@ -699,16 +651,6 @@ namespace MahjongTournamentManager.Server.Migrations
             modelBuilder.Entity("MahjongTournamentManager.Server.Models.MahjongMatch", b =>
                 {
                     b.Navigation("MahjongMatchPlayers");
-                });
-
-            modelBuilder.Entity("MahjongTournamentManager.Server.Models.SplatoonTournament", b =>
-                {
-                    b.Navigation("InvitedUsers");
-                });
-
-            modelBuilder.Entity("MahjongTournamentManager.Server.Models.TournamentSettings", b =>
-                {
-                    b.Navigation("InvitedUsers");
                 });
 #pragma warning restore 612, 618
         }

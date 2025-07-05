@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { environment } from '../../../environments/environment';
 import { FormsModule } from '@angular/forms';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-tournament-creation',
@@ -22,8 +23,14 @@ export class TournamentCreationComponent implements OnInit {
   selectedGameType: string = '雀魂';
   startingScoreOptions: number[] = [25000, 30000, 35000];
   message: string = '';
+  users: any[] = [];
 
-  constructor(private http: HttpClient, private router: Router, private fb: FormBuilder) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private fb: FormBuilder,
+    private userService: UserService
+  ) {
     this.tournamentForm = this.fb.group({
       tournamentName: ['', Validators.required],
       startDate: ['', Validators.required],
@@ -35,7 +42,9 @@ export class TournamentCreationComponent implements OnInit {
       redDora: [true],
       startingScore: [25000, Validators.required],
       status: [1, Validators.required],
-      description: ['']
+      description: [''],
+      isPrivate: [false],
+      invitedUsers: this.fb.array([])
     });
 
     this.splatoonTournamentForm = this.fb.group({
@@ -46,12 +55,28 @@ export class TournamentCreationComponent implements OnInit {
       gameMode: ['プライベートマッチ', Validators.required],
       status: [1, Validators.required],
       comment: [''],
-      maxParticipants: [null, [Validators.min(1)]]
+      maxParticipants: [null, [Validators.min(1)]],
+      isPrivate: [false],
+      invitedUsers: this.fb.array([])
     });
   }
 
   ngOnInit(): void {
     this.onGameTypeSelectionChange();
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.userService.getUsers().subscribe({
+      next: (users: any[]) => {
+        this.users = users;
+        console.log('Users loaded:', this.users);
+      },
+      error: (err: any) => {
+        console.error('Failed to load users', err);
+        this.message = 'ユーザーリストの読み込みに失敗しました。';
+      }
+    });
   }
 
   onGameTypeSelectionChange(): void {
@@ -60,37 +85,38 @@ export class TournamentCreationComponent implements OnInit {
     this.tournamentForm.patchValue({ playerCount: playerCount });
   }
 
-  createTournament(): void {
-    if (this.selectedGameType === '雀魂') {
-      if (this.tournamentForm.invalid) {
-        this.message = '入力内容に誤りがあります。';
-        return;
+  onUserSelectionChange(event: any, form: FormGroup): void {
+    const invitedUsers = form.get('invitedUsers') as FormArray;
+
+    if (event.target.checked) {
+      invitedUsers.push(this.fb.control(event.target.value));
+    } else {
+      const index = invitedUsers.controls.findIndex(x => x.value === event.target.value);
+      if (index !== -1) {
+        invitedUsers.removeAt(index);
       }
-      this.isSubmitting = true;
-      const tournamentData = this.tournamentForm.value;
-      this.http.post(this.mahjongApiUrl, tournamentData).subscribe({
-        next: () => this.router.navigate(['/events']),
-        error: (err) => {
-          console.error(err);
-          this.isSubmitting = false;
-          this.message = '作成に失敗しました。';
-        }
-      });
-    } else if (this.selectedGameType === 'スプラトゥーン') {
-      if (this.splatoonTournamentForm.invalid) {
-        this.message = '入力内容に誤りがあります。';
-        return;
-      }
-      this.isSubmitting = true;
-      const tournamentData = this.splatoonTournamentForm.value;
-      this.http.post(this.splatoonApiUrl, tournamentData).subscribe({
-        next: () => this.router.navigate(['/events']),
-        error: (err) => {
-          console.error(err);
-          this.isSubmitting = false;
-          this.message = '作成に失敗しました。';
-        }
-      });
     }
+  }
+
+  createTournament(): void {
+    const form = this.selectedGameType === '雀魂' ? this.tournamentForm : this.splatoonTournamentForm;
+    const apiUrl = this.selectedGameType === '雀魂' ? this.mahjongApiUrl : this.splatoonApiUrl;
+
+    if (form.invalid) {
+      this.message = '入力内容に誤りがあります。';
+      return;
+    }
+
+    this.isSubmitting = true;
+    const tournamentData = form.value;
+
+    this.http.post(apiUrl, tournamentData).subscribe({
+      next: () => this.router.navigate(['/events']),
+      error: (err: any) => {
+        console.error(err);
+        this.isSubmitting = false;
+        this.message = '作成に失敗しました。';
+      }
+    });
   }
 }

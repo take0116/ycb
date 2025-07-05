@@ -74,7 +74,21 @@
           <label for="description" class="form-label">コメント:</label>
           <textarea id="description" class="form-control" formControlName="description" rows="3"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="tournamentForm.invalid">大会を作成</button>
+
+        <div class="form-group form-check">
+          <input type="checkbox" id="isPrivate" class="form-check-input" formControlName="isPrivate">
+          <label for="isPrivate" class="form-check-label">限定募集にする</label>
+        </div>
+
+        <div *ngIf="tournamentForm.get('isPrivate')?.value" class="form-group">
+          <label class="form-label">招待するユーザー:</label>
+          <div *ngFor="let user of users" class="form-check">
+            <input type="checkbox" [id]="'user-jantama-' + user.id" class="form-check-input" [value]="user.id" (change)="onUserSelectionChange($event, tournamentForm)">
+            <label [for]="'user-jantama-' + user.id" class="form-check-label">{{ user.userName }}</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isSubmitting || tournamentForm.invalid">大会を作成</button>
       </form>
     </div>
 
@@ -124,7 +138,21 @@
             <option [ngValue]="2">募集終了</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary btn-block" [disabled]="splatoonTournamentForm.invalid">登録</button>
+
+        <div class="form-group form-check">
+          <input type="checkbox" id="splatoonIsPrivate" class="form-check-input" formControlName="isPrivate">
+          <label for="splatoonIsPrivate" class="form-check-label">募集を限定する</label>
+        </div>
+
+        <div *ngIf="splatoonTournamentForm.get('isPrivate')?.value" class="form-group">
+          <label class="form-label">招待するユーザー:</label>
+          <div *ngFor="let user of users" class="form-check">
+            <input type="checkbox" [id]="'user-splatoon-' + user.id" class="form-check-input" [value]="user.id" (change)="onUserSelectionChange($event, splatoonTournamentForm)">
+            <label [for]="'user-splatoon-' + user.id" class="form-check-label">{{ user.userName }}</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="isSubmitting || splatoonTournamentForm.invalid">登録</button>
       </form>
     </div>
 

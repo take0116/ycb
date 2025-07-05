@@ -27,6 +27,8 @@ namespace MahjongTournamentManager.Server.Models
         public int Status { get; set; }
         public string? Comment { get; set; }
         public int? MaxParticipants { get; set; }
+        public bool IsPrivate { get; set; }
+        public virtual ICollection<SplatoonTournamentInvitedUser> InvitedUsers { get; set; } = new List<SplatoonTournamentInvitedUser>();
     }
 
     public class SplatoonTournamentDto
@@ -40,5 +42,7 @@ namespace MahjongTournamentManager.Server.Models
         public string? Comment { get; set; }
         public int Status { get; set; }
         public int? MaxParticipants { get; set; }
+        public bool IsPrivate { get; set; }
+        public List<string> InvitedUserIds { get; set; } = new List<string>();
     }
 }
