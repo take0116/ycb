@@ -57,7 +57,7 @@ export class TournamentListComponent implements OnInit {
 
       const dateA = new Date(a.startDate).getTime();
       const dateB = new Date(b.startDate).getTime();
-      return dateA - dateB;
+      return dateB - dateA;
     });
   }
 
