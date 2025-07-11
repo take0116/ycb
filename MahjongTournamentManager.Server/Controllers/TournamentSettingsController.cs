@@ -37,12 +37,11 @@ namespace MahjongTournamentManager.Server.Controllers
 
             if (!isAdmin)
             {
-                mahjongQuery = mahjongQuery.Where(t => !t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId));
-                splatoonQuery = splatoonQuery.Where(t => !t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId));
+                mahjongQuery  = mahjongQuery.Where(t =>  (!t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId)) && (int)t.Status != (int)TournamentStatus.Finished);
+                splatoonQuery = splatoonQuery.Where(t => (!t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId)) && (int)t.Status != (int)TournamentStatus.Finished);
             }
 
             var mahjongTournaments = await mahjongQuery
-                .Where(ts => ts.Status != TournamentStatus.Finished)
                 .Select(t => new TournamentListItem
                 {
                     Id = t.Id,
@@ -51,12 +50,12 @@ namespace MahjongTournamentManager.Server.Controllers
                     StartDate = t.StartDate,
                     Status = (int)t.Status,
                     Description = t.Description,
-                    DetailUrl = $"/events/{t.Id}"
+                    DetailUrl = $"/events/{t.Id}",
+                    ParticipantsCount = t.Participants.Count()
                 })
                 .ToListAsync();
 
             var splatoonTournaments = await splatoonQuery
-                .Where(st => st.Status != 3) // Assuming 3 is "Finished"
                 .Select(t => new TournamentListItem
                 {
                     Id = t.Id,
@@ -65,7 +64,8 @@ namespace MahjongTournamentManager.Server.Controllers
                     StartDate = DateOnly.FromDateTime(t.EventDate.ToDateTime(t.StartTime)),
                     Status = t.Status,
                     Description = t.Comment,
-                    DetailUrl = $"/splatoon-event/{t.Id}"
+                    DetailUrl = $"/splatoon-event/{t.Id}",
+                    ParticipantsCount = t.Participants.Count()
                 })
                 .ToListAsync();
 
