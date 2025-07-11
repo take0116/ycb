@@ -71,8 +71,12 @@ export class SplatoonTournamentDetailComponent implements OnInit {
       next: () => {
         this.isParticipant = true;
         this.getParticipants();
+        this.message = '参加登録が完了しました。';
       },
-      error: err => console.error(err)
+      error: err => {
+        console.error(err);
+        this.message = '参加登録に失敗しました。';
+      }
     });
   }
 
