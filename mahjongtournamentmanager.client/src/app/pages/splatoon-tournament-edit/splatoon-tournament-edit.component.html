@@ -58,9 +58,11 @@
 
       <div *ngIf="tournamentForm.get('isPrivate')?.value" class="form-group">
         <label class="form-label">招待するユーザー:</label>
-        <div *ngFor="let user of users" class="form-check">
-          <input type="checkbox" [id]="'user-' + user.id" class="form-check-input" [value]="user.id" (change)="onUserSelectionChange($event)" [checked]="isUserInvited(user.id)">
-          <label [for]="'user-' + user.id" class="form-check-label">{{ user.userName }}</label>
+        <div class="private-list">
+          <div *ngFor="let user of users" class="form-check">
+            <input type="checkbox" [id]="'user-' + user.id" class="form-check-input" [value]="user.id" (change)="onUserSelectionChange($event)" [checked]="isUserInvited(user.id)">
+            <label [for]="'user-' + user.id" class="form-check-label">{{ user.userName }}</label>
+          </div>
         </div>
       </div>
 

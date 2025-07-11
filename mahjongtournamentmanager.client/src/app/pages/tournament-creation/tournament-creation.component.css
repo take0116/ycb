@@ -29,6 +29,12 @@
   height: auto;
 }
 
+.private-list {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
 .message {
   margin-top: var(--space-3);
   padding: var(--space-2);

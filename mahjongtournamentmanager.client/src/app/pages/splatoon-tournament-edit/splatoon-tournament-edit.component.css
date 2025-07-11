@@ -24,8 +24,14 @@
   margin-bottom: var(--space-3);
 }
 
-.form-row .form-group {
-  flex: 1;
+  .form-row .form-group {
+    flex: 1;
+  }
+
+.private-list {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
 }
 
 .message.error {
@@ -43,7 +49,8 @@
     gap: 0;
     margin-bottom: 0;
   }
-  .form-row .form-group {
-    margin-bottom: var(--space-3);
-  }
+
+    .form-row .form-group {
+      margin-bottom: var(--space-3);
+    }
 }
