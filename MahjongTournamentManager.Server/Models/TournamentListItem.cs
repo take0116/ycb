@@ -9,5 +9,6 @@ namespace MahjongTournamentManager.Server.Models
         public int Status { get; set; }
         public string? Description { get; set; }
         public string DetailUrl { get; set; }
+        public int ParticipantsCount { get; set; }
     }
 }

@@ -50,7 +50,8 @@ namespace MahjongTournamentManager.Server.Controllers
                     StartDate = t.StartDate,
                     Status = (int)t.Status,
                     Description = t.Description,
-                    DetailUrl = $"/events/{t.Id}"
+                    DetailUrl = $"/events/{t.Id}",
+                    ParticipantsCount = t.Participants.Count()
                 })
                 .ToListAsync();
 
@@ -63,7 +64,8 @@ namespace MahjongTournamentManager.Server.Controllers
                     StartDate = DateOnly.FromDateTime(t.EventDate.ToDateTime(t.StartTime)),
                     Status = t.Status,
                     Description = t.Comment,
-                    DetailUrl = $"/splatoon-event/{t.Id}"
+                    DetailUrl = $"/splatoon-event/{t.Id}",
+                    ParticipantsCount = t.Participants.Count()
                 })
                 .ToListAsync();
 

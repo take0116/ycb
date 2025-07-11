@@ -39,5 +39,6 @@ namespace MahjongTournamentManager.Server.Models
         public bool IsTableLocked { get; set; } = false; // 対戦表がロックされているか
         public bool IsPrivate { get; set; }
         public virtual ICollection<TournamentInvitedUser> InvitedUsers { get; set; } = new List<TournamentInvitedUser>();
+        public virtual ICollection<TournamentParticipant> Participants { get; set; } = new List<TournamentParticipant>();
     }
 }
