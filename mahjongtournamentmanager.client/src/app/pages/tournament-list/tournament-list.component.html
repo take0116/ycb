@@ -34,6 +34,7 @@
           <span *ngIf="tournament.gameTitle === '雀魂'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}～</span>
           <span *ngIf="tournament.gameTitle === 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
           <span *ngIf="tournament.gameTitle !== '雀魂' && tournament.gameTitle !== 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
+          <span class="participants-info">参加人数: {{ tournament.participantsCount }}</span>
         </div>
       </div>
     </div>

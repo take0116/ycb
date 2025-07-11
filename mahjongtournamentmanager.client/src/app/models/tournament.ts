@@ -1,12 +1,13 @@
 // For list view
 export interface TournamentListItem {
-    id: number;
-    gameTitle: string;
-    tournamentName: string;
-    startDate: Date;
-    status: number;
-    description?: string;
-    detailUrl: string;
+  id: number;
+  gameTitle: string;
+  tournamentName: string;
+  startDate: Date;
+  status: number;
+  description: string;
+  detailUrl: string;
+  participantsCount: number;
 }
 
 // For detail/edit view
