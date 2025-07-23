@@ -17,8 +17,10 @@ import { UserService } from '../../services/user.service';
 export class TournamentCreationComponent implements OnInit {
   private mahjongApiUrl = `${environment.apiUrl}/api/TournamentSettings`;
   private splatoonApiUrl = `${environment.apiUrl}/api/SplatoonTournaments`;
+  private marioKartApiUrl = `${environment.apiUrl}/api/MarioKartTournaments`;
   tournamentForm: FormGroup;
   splatoonTournamentForm: FormGroup;
+  marioKartTournamentForm: FormGroup;
   isSubmitting = false;
   selectedGameType: string = '雀魂';
   startingScoreOptions: number[] = [25000, 30000, 35000];
@@ -56,6 +58,19 @@ export class TournamentCreationComponent implements OnInit {
       status: [1, Validators.required],
       comment: [''],
       maxParticipants: [null, [Validators.min(1)]],
+      isPrivate: [false],
+      invitedUsers: this.fb.array([])
+    });
+
+    this.marioKartTournamentForm = this.fb.group({
+      tournamentName: ['', Validators.required],
+      eventDate: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      gameMode: ['個人戦', Validators.required],
+      status: [1, Validators.required],
+      comment: [''],
+      maxParticipants: [null, [Validators.min(1), Validators.max(24)]],
       isPrivate: [false],
       invitedUsers: this.fb.array([])
     });
@@ -99,8 +114,26 @@ export class TournamentCreationComponent implements OnInit {
   }
 
   createTournament(): void {
-    const form = this.selectedGameType === '雀魂' ? this.tournamentForm : this.splatoonTournamentForm;
-    const apiUrl = this.selectedGameType === '雀魂' ? this.mahjongApiUrl : this.splatoonApiUrl;
+    let form: FormGroup;
+    let apiUrl: string;
+
+    switch (this.selectedGameType) {
+      case '雀魂':
+        form = this.tournamentForm;
+        apiUrl = this.mahjongApiUrl;
+        break;
+      case 'スプラトゥーン':
+        form = this.splatoonTournamentForm;
+        apiUrl = this.splatoonApiUrl;
+        break;
+      case 'マリオカート':
+        form = this.marioKartTournamentForm;
+        apiUrl = this.marioKartApiUrl;
+        break;
+      default:
+        this.message = '無効なゲームタイプです。';
+        return;
+    }
 
     if (form.invalid) {
       this.message = '入力内容に誤りがあります。';

@@ -1,26 +1,24 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MahjongTournamentManager.Server.Models
 {
     public class SplatoonParticipant
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required]
         public int SplatoonTournamentId { get; set; }
-
-        [ForeignKey("SplatoonTournamentId")]
-        public SplatoonTournament SplatoonTournament { get; set; }
+        public virtual SplatoonTournament Tournament { get; set; }
 
         [Required]
         public string UserId { get; set; }
-
-        [ForeignKey("UserId")]
-        public IdentityUser User { get; set; }
+        public virtual IdentityUser User { get; set; }
 
         public DateTime JoinedDate { get; set; }
+
+        public string? Team { get; set; }
     }
 }
+

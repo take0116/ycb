@@ -24,11 +24,15 @@ export class TournamentListComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin = this.authService.hasRole('Admin');
+    this.loadTournaments();
+  }
+
+  loadTournaments(): void {
+    this.isLoading = true;
     this.http.get<TournamentListItem[]>(this.apiUrl).subscribe({
       next: data => {
         this.tournaments = this.sortTournaments(data);
         this.isLoading = false;
-        // Trigger scroll-based animations after data loads
         setTimeout(() => this.initScrollAnimations(), 0);
       },
       error: err => {
