@@ -17,13 +17,14 @@
   <div *ngIf="!isLoading && tournaments.length > 0" class="tournament-grid">
     <div class="card tournament-card" 
          *ngFor="let tournament of tournaments" 
-         [routerLink]="tournament.gameTitle === '雀魂' ? ['/events', tournament.id] : ['/splatoon-event', tournament.id]" 
-         [class.jantama]="tournament.gameTitle === '雀魂'"
-         [class.splatoon]="tournament.gameTitle === 'スプラトゥーン'"
+         [routerLink]="['/events', tournament.gameType, tournament.id]"
+         [class.jantama]="tournament.gameType === '雀魂'"
+         [class.splatoon]="tournament.gameType === 'スプラトゥーン'"
+         [class.mariokart]="tournament.gameType === 'マリオカート'"
          data-scroll>
       <div class="card-content">
         <div class="card-header">
-          <span class="game-title">{{ tournament.gameTitle }}</span>
+          <span class="game-title">{{ tournament.gameType }}</span>
           <span class="status-badge status-{{tournament.status}}">
             {{ tournament.status === 0 ? '企画中' : (tournament.status === 1 ? '募集中' : (tournament.status === 2 ? '募集終了' : '終了')) }}
           </span>
@@ -31,9 +32,10 @@
         <h3 class="card-title">{{ tournament.tournamentName }}</h3>
         <p class="card-description">{{ tournament.description }}</p>
         <div class="card-footer">
-          <span *ngIf="tournament.gameTitle === '雀魂'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}～</span>
-          <span *ngIf="tournament.gameTitle === 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
-          <span *ngIf="tournament.gameTitle !== '雀魂' && tournament.gameTitle !== 'スプラトゥーン'" class="date-info">{{ tournament.startDate | date:'yyyy/MM/dd' }}</span>
+          <span class="date-info">
+            {{ tournament.startDate | date:'yyyy/MM/dd' }}
+            <span *ngIf="tournament.endDate">～{{ tournament.endDate | date:'yyyy/MM/dd' }}</span>
+          </span>
           <span class="participants-info">参加人数: {{ tournament.participantsCount }}</span>
         </div>
       </div>

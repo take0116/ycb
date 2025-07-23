@@ -1,0 +1,81 @@
+<div class="container mariokart-edit-theme">
+  <header class="page-header">
+    <h1>{{ tournamentId ? 'マリオカート企画編集' : 'マリオカート企画作成' }}</h1>
+  </header>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <form [formGroup]="tournamentForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+    <div class="form-group">
+      <label for="tournamentName">企画名</label>
+      <input id="tournamentName" type="text" formControlName="tournamentName" class="form-control">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="eventDate">開催日</label>
+        <input id="eventDate" type="date" formControlName="eventDate" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="startTime">開始時刻</label>
+        <input id="startTime" type="time" formControlName="startTime" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="endTime">終了時刻</label>
+        <input id="endTime" type="time" formControlName="endTime" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="gameMode">モード</label>
+      <select id="gameMode" formControlName="gameMode" class="form-control">
+        <option>個人戦</option>
+        <option>タッグ戦</option>
+        <option>チーム戦</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="maxParticipants">募集人数 (24人まで)</label>
+      <input id="maxParticipants" type="number" formControlName="maxParticipants" class="form-control" min="1" max="24">
+    </div>
+
+    <div class="form-group">
+      <label for="comment">コメント</label>
+      <textarea id="comment" formControlName="comment" rows="4" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="status">状態</label>
+      <select id="status" formControlName="status" class="form-control">
+        <option [ngValue]="0">企画中</option>
+        <option [ngValue]="1">募集中</option>
+        <option [ngValue]="2">募集終了</option>
+      </select>
+    </div>
+
+    <div class="form-group form-check">
+      <input type="checkbox" id="isPrivate" formControlName="isPrivate" class="form-check-input">
+      <label for="isPrivate" class="form-check-label">募集を限定する</label>
+    </div>
+
+    <div *ngIf="tournamentForm.get('isPrivate')?.value" class="form-group">
+      <label class="form-label">招待するユーザー</label>
+      <div class="private-list">
+        <div *ngFor="let user of users" class="form-check">
+          <input type="checkbox" [id]="'user-' + user.id" [value]="user.id" (change)="onUserSelectionChange($event)" [checked]="isUserInvited(user.id)">
+          <label [for]="'user-' + user.id">{{ user.userName }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" class="btn btn-primary" [disabled]="tournamentForm.invalid">保存</button>
+      <button type="button" class="btn btn-secondary" (click)="router.navigate(['/events'])">キャンセル</button>
+    </div>
+  </form>
+</div>

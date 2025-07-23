@@ -34,23 +34,25 @@ namespace MahjongTournamentManager.Server.Controllers
 
             var mahjongQuery = _context.TournamentSettings.AsQueryable();
             var splatoonQuery = _context.SplatoonTournaments.AsQueryable();
+            var marioKartQuery = _context.MarioKartTournaments.AsQueryable();
 
             if (!isAdmin)
             {
                 mahjongQuery  = mahjongQuery.Where(t =>  (!t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId)) && (int)t.Status != (int)TournamentStatus.Finished);
                 splatoonQuery = splatoonQuery.Where(t => (!t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId)) && (int)t.Status != (int)TournamentStatus.Finished);
+                marioKartQuery = marioKartQuery.Where(t => (!t.IsPrivate || t.InvitedUsers.Any(u => u.UserId == userId)) && (int)t.Status != (int)TournamentStatus.Finished);
             }
 
             var mahjongTournaments = await mahjongQuery
                 .Select(t => new TournamentListItem
                 {
                     Id = t.Id,
-                    GameTitle = "雀魂",
+                    GameType = "雀魂",
                     TournamentName = t.TournamentName,
-                    StartDate = t.StartDate,
+                    StartDate = t.StartDate.ToDateTime(TimeOnly.MinValue),
+                    EndDate = t.EndDate.ToDateTime(TimeOnly.MinValue),
                     Status = (int)t.Status,
                     Description = t.Description,
-                    DetailUrl = $"/events/{t.Id}",
                     ParticipantsCount = t.Participants.Count()
                 })
                 .ToListAsync();
@@ -59,18 +61,31 @@ namespace MahjongTournamentManager.Server.Controllers
                 .Select(t => new TournamentListItem
                 {
                     Id = t.Id,
-                    GameTitle = "スプラトゥーン",
+                    GameType = "スプラトゥーン",
                     TournamentName = t.TournamentName,
-                    StartDate = DateOnly.FromDateTime(t.EventDate.ToDateTime(t.StartTime)),
+                    StartDate = t.EventDate.ToDateTime(TimeOnly.MinValue),
                     Status = t.Status,
                     Description = t.Comment,
-                    DetailUrl = $"/splatoon-event/{t.Id}",
+                    ParticipantsCount = t.Participants.Count()
+                })
+                .ToListAsync();
+            
+            var marioKartTournaments = await marioKartQuery
+                .Select(t => new TournamentListItem
+                {
+                    Id = t.Id,
+                    GameType = "マリオカート",
+                    TournamentName = t.TournamentName,
+                    StartDate = t.EventDate.ToDateTime(TimeOnly.MinValue),
+                    Status = t.Status,
+                    Description = t.Comment,
                     ParticipantsCount = t.Participants.Count()
                 })
                 .ToListAsync();
 
             var allTournaments = mahjongTournaments
                 .Concat(splatoonTournaments)
+                .Concat(marioKartTournaments)
                 .OrderBy(t => t.StartDate)
                 .ToList();
 

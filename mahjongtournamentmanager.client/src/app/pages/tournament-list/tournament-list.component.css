@@ -98,6 +98,21 @@
     z-index: 1;
   }
 
+  .tournament-card.mariokart::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(/assets/icons/mario_cart.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: auto 80%;
+    opacity: 0.2; /* 背景画像の透明度を調整 */
+    z-index: 1;
+  }
+
 .card-content {
   display: flex;
   flex-direction: column;
@@ -111,7 +126,8 @@
 }
 
 .tournament-card.jantama .card-content,
-.tournament-card.splatoon .card-content {
+.tournament-card.splatoon .card-content,
+.tournament-card.mariokart .card-content {
 }
 
 .tournament-card:hover {

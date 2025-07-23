@@ -21,5 +21,23 @@ namespace MahjongTournamentManager.Server.Data
         public DbSet<ScheduleAvailability> ScheduleAvailabilities { get; set; }
         public DbSet<TournamentInvitedUser> TournamentInvitedUsers { get; set; }
         public DbSet<SplatoonTournamentInvitedUser> SplatoonTournamentInvitedUsers { get; set; }
+        public DbSet<MarioKartTournament> MarioKartTournaments { get; set; }
+        public DbSet<MarioKartParticipant> MarioKartParticipants { get; set; }
+        public DbSet<MarioKartTournamentInvitedUser> MarioKartTournamentInvitedUsers { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<SplatoonParticipant>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId);
+
+            builder.Entity<MarioKartParticipant>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId);
+        }
     }
 }
